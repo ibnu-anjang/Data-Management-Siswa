@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Management App — Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Outer Desktop Workspace Controls -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="logo-icon">
+        <i data-lucide="graduation-cap" class="icon-lg"></i>
+      </div>
+      <div>
+        <h1 class="header-title">SekolahKu</h1>
+        <p class="header-subtitle">Aplikasi Manajemen Data Siswa</p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Theme Switcher Pills -->
+      <div class="control-group">
+        <span class="control-label">Tema</span>
+        <button id="themeLightBtn" class="btn-pill active" onclick="setThemeMode('light')" aria-label="Light Theme">
+          <i data-lucide="sun"></i> Terang
+        </button>
+        <button id="themeDarkBtn" class="btn-pill" onclick="setThemeMode('dark')" aria-label="Dark Theme">
+          <i data-lucide="moon"></i> Gelap
+        </button>
+        <button id="themeSystemBtn" class="btn-pill" onclick="setThemeMode('system')" aria-label="System Theme">
+          <i data-lucide="monitor"></i> Sistem
+        </button>
+      </div>
+
+      <!-- Role Switcher Pills -->
+      <div class="control-group">
+        <span class="control-label">Peran</span>
+        <button id="btnRoleClient" class="btn-pill" onclick="switchRole('client')" aria-label="Role Client">Client ★★☆☆☆</button>
+        <button id="btnRoleAdmin" class="btn-pill active" onclick="switchRole('admin')" aria-label="Role Admin">Admin ★★★★★</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Screen Toolbar -->
+  <div class="screen-toolbar">
+    <div class="screen-tabs-container">
+      <span class="toolbar-label">Layar:</span>
+      <div class="screen-tabs" id="screenTabs">
+        <button class="tab-btn active" data-screen="s01" onclick="navTo('s01', true)"><span class="tab-code">S01</span> Login</button>
+        <button class="tab-btn role-client-tab" data-screen="s02" onclick="navTo('s02', true)"><span class="tab-code">S02</span> Home</button>
+        <button class="tab-btn role-client-tab" data-screen="s03" onclick="navTo('s03', true)"><span class="tab-code">S03</span> Data Siswa</button>
+        <button class="tab-btn role-admin-tab" data-screen="s04" onclick="navTo('s04', true)"><span class="tab-code">S04</span> Dashboard</button>
+        <button class="tab-btn role-admin-tab" data-screen="s05" onclick="navTo('s05', true)"><span class="tab-code">S05</span> Kelola Siswa</button>
+        <button class="tab-btn role-admin-tab" data-screen="s06" onclick="navTo('s05', true, 's06'); openAddModal();"><span class="tab-code">S06</span> + Tambah</button>
+        <button class="tab-btn role-admin-tab" data-screen="s07" onclick="navTo('s05', true, 's07'); openEditModal(101);"><span class="tab-code">S07</span> ✎ Edit</button>
+        <button class="tab-btn role-admin-tab" data-screen="s08" onclick="navTo('s05', true, 's08'); openDeleteDialog('Ahmad Rafli', '210101', 101);"><span class="tab-code">S08</span> 🗑 Hapus</button>
+        <button class="tab-btn" data-screen="s09" onclick="navTo('s09', true)"><span class="tab-code">S09</span> Profil</button>
+        <button class="tab-btn role-admin-tab" data-screen="s10" onclick="navTo('s09', true, 's10'); openAddRombelModal();"><span class="tab-code">S10</span> + Rombel</button>
+        <button class="tab-btn role-admin-tab" data-screen="s11" onclick="navTo('s09', true, 's11'); openEditRombelModal('XII IPA 1');"><span class="tab-code">S11</span> ✎ Rombel</button>
+      </div>
+    </div>
+
+    <!-- UI State Selector -->
+    <div class="state-selector-group">
+      <span class="toolbar-label">State:</span>
+      <select id="stateSelect" class="state-select" aria-label="Simulasi State UI" onchange="setScreenState(this.value)">
+        <option value="loaded">Loaded (Normal)</option>
+        <option value="loading">Loading Skeleton</option>
+        <option value="empty">Empty State</option>
+        <option value="error">Error State</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Mobile Viewport Frame & Live Demo Panel -->
+  <main class="viewport-area">
+
+    <!-- Presentation & Live Demo Guide Panel (Embedded for Instant Presenting & Frontend Handoff) -->
+    <aside class="presentation-panel">
+      <div style="display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #334155; padding-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i data-lucide="presentation" style="width:18px; height:18px; color:var(--color-primary-light);"></i>
+            <h3 style="font-size:14px; font-weight:700; color:#F8FAFC;">Panel Presentasi & Handoff</h3>
+          </div>
+          <span class="badge badge-primary" style="font-size:10px;">1:1 Baseline</span>
+        </div>
+
+        <!-- Panel Tab Switcher -->
+        <div style="display:flex; gap:6px; background:#0F172A; padding:3px; border-radius:6px; border:1px solid #334155;">
+          <button type="button" id="tabGuideDemo" class="btn-pill active" style="flex:1; justify-content:center; padding:4px 8px; font-size:11px;" onclick="switchPanelTab('demo')">
+            <i data-lucide="play-circle" class="icon-sm"></i> Script Demo
+          </button>
+          <button type="button" id="tabGuideHandoff" class="btn-pill" style="flex:1; justify-content:center; padding:4px 8px; font-size:11px;" onclick="switchPanelTab('handoff')">
+            <i data-lucide="code-2" class="icon-sm"></i> Handoff Frontend
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content 1: Demo Script & UX Highlights -->
+      <div id="panelContentDemo" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="target" class="icon-sm"></i> Prioritas Operasional</div>
+          <div class="demo-step-desc">
+            • <strong>Admin (★★★★★):</strong> Login, Dashboard, CRUD Siswa, Search, Filter, CRUD Rombel, Delete Dialog.<br/>
+            • <strong>Client (★★☆☆☆):</strong> Login, Beranda, Read-Only Siswa List, Search, Filter, Profil.
+          </div>
+        </div>
+
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="play-circle" class="icon-sm"></i> Skenario Demo (Script)</div>
+          <div class="demo-step-desc" style="display:flex; flex-direction:column; gap:6px;">
+            <div><strong>1. S01 Login:</strong> Uji switch tema di pojok kanan atas HP. Klik <em>"Admin"</em> untuk masuk.</div>
+            <div><strong>2. S05 Admin CRUD:</strong> Seret <em>chips filter</em> ke kanan-kiri dengan mouse. Ketik kata kunci & klik tombol silang (X). Tunjukkan tombol Hapus berwarna merah.</div>
+            <div><strong>3. S09 Kelola Rombel:</strong> Buka Profil, tambah kelas baru (misal: <em>XII IPS 2</em>), lalu ubah nama kelas. Tunjukkan data siswa otomatis tersinkronisasi!</div>
+            <div><strong>4. Mode Client:</strong> Switch ke <em>"Client ★★☆☆☆"</em> di toolbar atas untuk tunjukkan batas akses read-only.</div>
+            <div><strong>5. State Machine:</strong> Ubah dropdown <em>State</em> di atas ke <em>Loading Skeleton</em>, <em>Empty</em>, atau <em>Error</em>.</div>
+          </div>
+        </div>
+
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="sparkles" class="icon-sm"></i> Keunggulan UI/UX</div>
+          <div class="demo-step-desc">
+            ✓ High-Fidelity 1:1 Prototype Baseline<br/>
+            ✓ Zero Browser JS Alert/Prompt Popup<br/>
+            ✓ Mouse Drag-to-Scroll Filter Chips<br/>
+            ✓ Mobile Safe Area Navigation Layout<br/>
+            ✓ Bahasa Indonesia Ramah & Modern
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Technical Frontend Blueprint (Flutter + Firebase Handoff) -->
+      <div id="panelContentHandoff" style="display:none; flex-direction:column; gap:12px;">
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="folder-tree" class="icon-sm"></i> Struktur Widget Flutter (1:1 Layout)</div>
+          <div class="demo-step-desc" style="font-family:monospace; font-size:11px; line-height:1.5; color:#93C5FD;">
+            lib/<br/>
+            ├── models/ (student_model.dart, class_model.dart)<br/>
+            ├── theme/ (app_colors.dart, app_theme.dart)<br/>
+            ├── screens/<br/>
+            │   ├── login_screen.dart (S01)<br/>
+            │   ├── client_home_screen.dart (S02)<br/>
+            │   ├── client_student_screen.dart (S03)<br/>
+            │   ├── admin_dashboard_screen.dart (S04)<br/>
+            │   ├── admin_student_crud_screen.dart (S05)<br/>
+            │   └── profile_screen.dart (S09)<br/>
+            └── widgets/<br/>
+                ├── student_form_modal.dart (S06 / S07)<br/>
+                ├── delete_dialog.dart (S08)<br/>
+                └── rombel_form_modal.dart (S10 / S11)
+          </div>
+        </div>
+
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="database" class="icon-sm"></i> Schema Firebase Firestore</div>
+          <div class="demo-step-desc" style="font-family:monospace; font-size:11px; color:#A7F3D0; line-height:1.4;">
+            Collection: <strong>students</strong><br/>
+            - id: String (Auto ID)<br/>
+            - name: String<br/>
+            - nis: String<br/>
+            - class: String (e.g. "XII IPA 1")<br/>
+            - gender: String ("Laki-laki" | "Perempuan")<br/>
+            - address: String<br/>
+            - created_at: Timestamp<br/><br/>
+            Collection: <strong>classes</strong><br/>
+            - name: String (Primary Key)<br/>
+            - sort_order: Number
+          </div>
+        </div>
+
+        <div class="demo-step-card">
+          <div class="demo-step-title"><i data-lucide="palette" class="icon-sm"></i> Palette Token ThemeData</div>
+          <div class="demo-step-desc" style="font-family:monospace; font-size:11px; color:#FDE68A; line-height:1.4;">
+            primary: Color(0xFF2563EB)<br/>
+            background: Color(0xFFF8FAFC)<br/>
+            surface: Color(0xFFFFFFFF)<br/>
+            textPrimary: Color(0xFF0F172A)<br/>
+            textMuted: Color(0xFF64748B)<br/>
+            border: Color(0xFFE2E8F0)<br/>
+            danger: Color(0xFFDC2626)<br/>
+            controlRadius: 8.0, cardRadius: 12.0
+          </div>
+        </div>
+
+        <div class="demo-step-card" style="border-color:#3B82F6;">
+          <div class="demo-step-title" style="color:#60A5FA;">
+            <i data-lucide="clock" class="icon-sm"></i> Estimasi Senior Fullstack (Tanpa AI)
+          </div>
+          <div class="demo-step-desc" style="font-size:11px; line-height:1.5;">
+            • <strong>Phase 1 (Setup & Auth):</strong> 2 – 3 Hari (16–24 jam)<br/>
+            • <strong>Phase 2 (Client Module):</strong> 3 – 4 Hari (24–32 jam)<br/>
+            • <strong>Phase 3 (Admin Student CRUD):</strong> 4 – 5 Hari (32–40 jam)<br/>
+            • <strong>Phase 4 (Rombel CRUD & Sync):</strong> 3 – 4 Hari (24–32 jam)<br/>
+            • <strong>Phase 5 (Testing & Polish):</strong> 2 – 3 Hari (16–24 jam)<br/>
+            <div style="margin-top:6px; padding-top:6px; border-top:1px solid #334155; color:#F43F5E; font-weight:700;">
+              ⏱ TOTAL REALISTIS MANUAL: 14 – 19 Hari Kerja (3 – 4 Minggu)
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      
+      <!-- Phone Status Bar -->
+      <div class="phone-status-bar">
+        <span id="phoneClock">09:41</span>
+        <div class="status-bar-icons">
+          <i data-lucide="wifi" class="icon-sm"></i>
+          <i data-lucide="battery" class="icon-sm"></i>
+        </div>
+      </div>
+
+      <div class="phone-screen" id="phoneScreen">
+
+        <!-- ==========================================
+             S01: LOGIN SCREEN
+             ========================================== -->
+        <section id="screen-s01" class="screen-content active" style="position:relative;">
+          <!-- Top Right Quick Theme Toggle Button -->
+          <div style="position:absolute; top:12px; right:12px; z-index:30;">
+            <button type="button" class="btn-action-icon" onclick="cycleTheme()" aria-label="Ubah Tema" title="Ubah Tema">
+              <i data-lucide="sun" id="loginThemeIcon"></i>
+            </button>
+          </div>
+
+          <div class="login-wrapper">
+            <div class="login-branding">
+              <div class="brand-logo">
+                <i data-lucide="graduation-cap" class="brand-icon"></i>
+              </div>
+              <h2 class="login-title">SekolahKu</h2>
+              <p class="login-subtitle">Kelola data siswa lebih gampang dan cepat</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="login-card">
+              <div class="form-group">
+                <label class="form-label" for="loginEmail">Email</label>
+                <div class="input-wrapper">
+                  <i data-lucide="mail" class="input-icon"></i>
+                  <input type="email" id="loginEmail" class="form-input" placeholder="contoh@sekolah.sch.id" value="admin@sekolah.sch.id" required autocomplete="email" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="loginPassword">Kata Sandi</label>
+                <div class="input-wrapper">
+                  <i data-lucide="lock" class="input-icon"></i>
+                  <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan kata sandi" value="password123" required autocomplete="current-password" />
+                  <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('loginPassword')" aria-label="Toggle Password Visibility">
+                    <i data-lucide="eye" id="eyeIcon"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group margin-top-16">
+                <button type="submit" id="btnLoginSubmit" class="btn btn-primary btn-full">
+                  <span class="btn-text">Masuk</span>
+                  <i data-lucide="loader-2" class="btn-spinner"></i>
+                </button>
+              </div>
+
+              <div class="demo-quick-login">
+                <p class="text-caption text-center text-muted" style="margin-bottom: 8px;">Coba Sebagai:</p>
+                <div style="display:flex; gap:8px;">
+                  <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="quickLogin('admin')">Admin</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="quickLogin('client')">Siswa & Wali</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+
+        <!-- ==========================================
+             S02: CLIENT HOME / RECAP
+             ========================================== -->
+        <section id="screen-s02" class="screen-content">
+          <div class="app-bar">
+            <div>
+              <h2 class="app-bar-title">Ringkasan Data</h2>
+              <span class="app-bar-subtitle">Informasi siswa & kelas</span>
+            </div>
+          </div>
+
+          <div class="scroll-content" id="clientHomeScrollContainer">
+            <!-- Rendered by JS -->
+          </div>
+
+          <nav class="bottom-nav">
+            <button class="nav-item active" onclick="navTo('s02')" aria-label="Beranda"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></button>
+            <button class="nav-item" onclick="navTo('s03')" aria-label="Data Siswa"><i data-lucide="users" class="nav-icon"></i><span class="nav-label">Data Siswa</span></button>
+            <button class="nav-item" onclick="navTo('s09')" aria-label="Profil"><i data-lucide="user" class="nav-icon"></i><span class="nav-label">Profil</span></button>
+          </nav>
+        </section>
+
+
+        <!-- ==========================================
+             S03: CLIENT STUDENT LIST (READ ONLY)
+             ========================================== -->
+        <section id="screen-s03" class="screen-content">
+          <div class="app-bar">
+            <div>
+              <h2 class="app-bar-title">Daftar Siswa</h2>
+              <span class="app-bar-subtitle">Data seluruh siswa terdaftar</span>
+            </div>
+          </div>
+
+          <div class="filter-sticky-bar">
+            <div class="search-box">
+              <i data-lucide="search" class="input-icon"></i>
+              <input type="text" class="form-input" id="clientSearchInput" placeholder="Cari nama atau NIS siswa..." oninput="handleClientFilter()" style="padding-right: 36px;" />
+              <button type="button" class="btn-clear-search" id="clientClearSearchBtn" onclick="clearClientSearch()" aria-label="Hapus Pencarian">
+                <i data-lucide="x-circle" class="icon-sm"></i>
+              </button>
+            </div>
+            <div class="chip-filter-row" id="clientFilterChipsContainer">
+               <!-- Dynamic chips -->
+            </div>
+          </div>
+
+          <div class="scroll-content" id="clientStudentListContainer">
+            <!-- Rendered by JS -->
+          </div>
+
+          <nav class="bottom-nav">
+            <button class="nav-item" onclick="navTo('s02')" aria-label="Beranda"><i data-lucide="home" class="nav-icon"></i><span class="nav-label">Beranda</span></button>
+            <button class="nav-item active" onclick="navTo('s03')" aria-label="Data Siswa"><i data-lucide="users" class="nav-icon"></i><span class="nav-label">Data Siswa</span></button>
+            <button class="nav-item" onclick="navTo('s09')" aria-label="Profil"><i data-lucide="user" class="nav-icon"></i><span class="nav-label">Profil</span></button>
+          </nav>
+        </section>
+
+
+        <!-- ==========================================
+             S04: ADMIN DASHBOARD SCREEN (PRIORITY: ★★★★★)
+             ========================================== -->
+        <section id="screen-s04" class="screen-content">
+          <div class="app-bar">
+            <div>
+              <h2 class="app-bar-title">Dashboard</h2>
+              <span class="app-bar-subtitle">Ringkasan aktivitas sekolah</span>
+            </div>
+          </div>
+
+          <div class="scroll-content" id="adminDashboardScrollContainer">
+            <!-- Rendered by JS -->
+          </div>
+
+          <nav class="bottom-nav">
+            <button class="nav-item active" onclick="navTo('s04')" aria-label="Dashboard"><i data-lucide="layout-dashboard" class="nav-icon"></i><span class="nav-label">Dashboard</span></button>
+            <button class="nav-item" onclick="navTo('s05')" aria-label="Kelola Siswa"><i data-lucide="users" class="nav-icon"></i><span class="nav-label">Kelola Siswa</span></button>
+            <button class="nav-item" onclick="navTo('s09')" aria-label="Profil"><i data-lucide="user" class="nav-icon"></i><span class="nav-label">Profil</span></button>
+          </nav>
+        </section>
+
+
+        <!-- ==========================================
+             S05: ADMIN STUDENT MANAGEMENT (CORE CRUD - PRIORITY: ★★★★★)
+             ========================================== -->
+        <section id="screen-s05" class="screen-content">
+          <div class="app-bar">
+            <div>
+              <h2 class="app-bar-title">Kelola Data Siswa</h2>
+              <span class="app-bar-subtitle">Tambah, ubah, atau hapus siswa</span>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAddModal()">
+              <i data-lucide="plus" class="icon-sm"></i> Siswa
+            </button>
+          </div>
+
+          <div class="filter-sticky-bar">
+            <div class="search-box">
+              <i data-lucide="search" class="input-icon"></i>
+              <input type="text" class="form-input" id="adminSearchInput" placeholder="Cari nama atau NIS..." oninput="handleAdminFilter()" style="padding-right: 36px;" />
+              <button type="button" class="btn-clear-search" id="adminClearSearchBtn" onclick="clearAdminSearch()" aria-label="Hapus Pencarian">
+                <i data-lucide="x-circle" class="icon-sm"></i>
+              </button>
+            </div>
+
+            <div class="chip-filter-row" id="adminFilterChipsContainer">
+               <!-- Dynamic chips -->
+            </div>
+          </div>
+
+          <div class="scroll-content" id="adminStudentListContainer">
+            <!-- Rendered list items -->
+          </div>
+
+          <nav class="bottom-nav">
+            <button class="nav-item" onclick="navTo('s04')" aria-label="Dashboard"><i data-lucide="layout-dashboard" class="nav-icon"></i><span class="nav-label">Dashboard</span></button>
+            <button class="nav-item active" onclick="navTo('s05')" aria-label="Kelola Siswa"><i data-lucide="users" class="nav-icon"></i><span class="nav-label">Kelola Siswa</span></button>
+            <button class="nav-item" onclick="navTo('s09')" aria-label="Profil"><i data-lucide="user" class="nav-icon"></i><span class="nav-label">Profil</span></button>
+          </nav>
+        </section>
+
+
+        <!-- ==========================================
+             S09: ACCOUNT / LOGOUT SCREEN
+             ========================================== -->
+        <section id="screen-s09" class="screen-content">
+          <div class="app-bar">
+            <div>
+              <h2 class="app-bar-title">Profil & Pengaturan</h2>
+              <span class="app-bar-subtitle">Kelola akun dan sistem</span>
+            </div>
+          </div>
+
+          <div class="scroll-content">
+            <div class="card-base" style="display:flex; align-items:center; gap:12px;">
+              <div class="student-avatar" id="profileAvatar" style="width:48px; height:48px; font-size:16px;">ADM</div>
+              <div style="flex:1;">
+                <h3 id="profileName" class="text-title">Administrator Utama</h3>
+                <p id="profileEmail" class="text-caption text-muted">admin@sekolah.sch.id</p>
+                <span id="profileRoleBadge" class="badge badge-primary" style="margin-top:4px;">Peran: Admin</span>
+              </div>
+            </div>
+
+            <!-- Admin Rombel CRUD Section -->
+            <div id="adminRombelSection" style="margin-top: 16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 class="text-title">Kelola Kelas (Rombel)</h3>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openAddRombelModal()">
+                  <i data-lucide="plus" class="icon-sm"></i> Rombel
+                </button>
+              </div>
+              <div class="card-base" style="padding:12px;">
+                <div style="display:flex; flex-wrap:wrap; gap:6px;" id="rombelListContainer">
+                  <!-- Dynamic Rombel Chips injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+              <h3 class="text-title" style="margin-bottom:8px;">Pilihan Tema</h3>
+              <div style="display:flex; gap:8px;">
+                <button type="button" id="segLight" class="btn btn-secondary btn-sm active" style="flex:1;" onclick="setThemeMode('light')">
+                  <i data-lucide="sun" class="icon-sm"></i> Terang
+                </button>
+                <button type="button" id="segDark" class="btn btn-secondary btn-sm" style="flex:1;" onclick="setThemeMode('dark')">
+                  <i data-lucide="moon" class="icon-sm"></i> Gelap
+                </button>
+                <button type="button" id="segSystem" class="btn btn-secondary btn-sm" style="flex:1;" onclick="setThemeMode('system')">
+                  <i data-lucide="monitor" class="icon-sm"></i> Sistem
+                </button>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+              <button type="button" class="btn btn-danger btn-full" onclick="handleLogout()" id="btnLogout">
+                <i data-lucide="log-out" class="icon-sm"></i> <span class="btn-text">Keluar dari Akun</span>
+                <i data-lucide="loader-2" class="btn-spinner"></i>
+              </button>
+            </div>
+          </div>
+
+          <nav class="bottom-nav" id="s09BottomNav">
+            <!-- Dynamically injected -->
+          </nav>
+        </section>
+
+      </div> <!-- /phone-screen -->
+
+      <div class="phone-home-indicator"></div>
+
+      <!-- =========================================================================
+           MODALS & DIALOGS (Position Absolute to Phone Frame)
+           ========================================================================= -->
+
+      <div class="modal-overlay" id="modalOverlay" onclick="if(event.target === this) { closeModal('studentFormModal'); closeModal('deleteConfirmDialog'); closeModal('rombelFormModal'); }">
+
+        <!-- ROMBEL ADD/EDIT MODAL UI -->
+        <div class="modal-card" id="rombelFormModal">
+          <div class="modal-header">
+            <h3 class="modal-title" id="rombelModalTitle">Tambah Kelas Baru</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('rombelFormModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <form id="rombelForm" onsubmit="handleRombelSubmit(event)">
+            <input type="hidden" id="inputRombelOldName" value="" />
+
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label" for="inputRombelName">Nama Kelas <span class="required-star">*</span></label>
+                <input type="text" id="inputRombelName" class="form-input" placeholder="Contoh: XII IPS 2" style="padding-left:12px;" />
+                <span class="field-error" id="errorRombelName">Nama kelas tidak boleh kosong</span>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="closeModal('rombelFormModal')">Batal</button>
+              <button type="submit" id="btnSaveRombel" class="btn btn-primary">
+                <span class="btn-text">Simpan</span>
+                <i data-lucide="loader-2" class="btn-spinner"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- S06 & S07: ADD / EDIT STUDENT MODAL -->
+        <div class="modal-card" id="studentFormModal">
+          <div class="modal-header">
+            <h3 class="modal-title" id="formModalTitle">Tambah Siswa Baru</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('studentFormModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <form id="studentForm" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="studentFormId" value="" />
+
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label" for="inputName">Nama Lengkap <span class="required-star">*</span></label>
+                <input type="text" id="inputName" class="form-input" placeholder="Masukkan nama lengkap" style="padding-left:12px;" />
+                <span class="field-error" id="errorName">Nama lengkap tidak boleh kosong</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inputNIS">NIS (Nomor Induk Siswa) <span class="required-star">*</span></label>
+                <input type="text" id="inputNIS" class="form-input" placeholder="Contoh: 210103" inputmode="numeric" pattern="[0-9]*" style="padding-left:12px;" />
+                <span class="field-error" id="errorNIS">NIS harus diisi angka</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="selectClass">Kelas <span class="required-star">*</span></label>
+                <select id="selectClass" class="form-select">
+                  <option value="" disabled selected>-- Pilih Kelas --</option>
+                </select>
+                <span class="field-error" id="errorClass">Pilih kelas terlebih dahulu</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Jenis Kelamin <span class="required-star">*</span></label>
+                <div class="gender-radio-group">
+                  <label class="gender-option">
+                    <input type="radio" name="gender" value="Laki-laki" id="genderL" checked /> Laki-laki
+                  </label>
+                  <label class="gender-option">
+                    <input type="radio" name="gender" value="Perempuan" id="genderP" /> Perempuan
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inputAddress">Alamat Lengkap</label>
+                <textarea id="inputAddress" class="form-textarea" rows="2" placeholder="Masukkan alamat rumah"></textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="closeModal('studentFormModal')">Batal</button>
+              <button type="submit" id="btnSaveStudent" class="btn btn-primary">
+                <span class="btn-text">Simpan Data</span>
+                <i data-lucide="loader-2" class="btn-spinner"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- S08: DELETE CONFIRMATION DIALOG -->
+        <div class="dialog-card" id="deleteConfirmDialog">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:36px; height:36px; border-radius:var(--radius-pill); background:var(--color-danger-bg); color:var(--color-danger); display:flex; align-items:center; justify-content:center;">
+              <i data-lucide="alert-triangle"></i>
+            </div>
+            <h3 class="modal-title">Hapus Data Siswa?</h3>
+          </div>
+
+          <div style="font-size: 14px; color: var(--color-text);">
+            <p>Kamu yakin ingin menghapus data siswa ini?</p>
+            <div style="background:var(--color-surface-subtle); padding:10px 12px; border-radius:var(--radius-sm); margin-top:8px; border:1px solid var(--color-border);">
+              <strong id="deleteTargetName" style="font-size: 14px;">Ahmad Rafli</strong>
+              <div id="deleteTargetNIS" class="text-caption text-muted">NIS: 210101</div>
+            </div>
+            <p class="text-caption text-danger" style="margin-top: 8px;">Data yang sudah dihapus tidak bisa dikembalikan lagi.</p>
+          </div>
+
+          <div class="dialog-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmDialog')">Batal</button>
+            <button type="button" id="btnConfirmDelete" class="btn btn-danger" onclick="executeDelete()">
+              <span class="btn-text">Ya, Hapus</span>
+              <i data-lucide="loader-2" class="btn-spinner"></i>
+            </button>
+          </div>
+        </div>
+
+      </div> <!-- /modal-overlay -->
+
+      <!-- Toast Notification -->
+      <div id="toast" class="toast-notification">
+        <i data-lucide="check-circle" id="toastIcon"></i>
+        <span id="toastMsg">Berhasil!</span>
+      </div>
+
+    </div> <!-- /phone-frame -->
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -45,3 +45,9 @@ firestore-debug.log
 *.jks
 **/google-services.json
 **/GoogleService-Info.plist
+
+# Scratch & Temporary Files
+scratch/
+*.tmp
+*.bak
+.gemini/

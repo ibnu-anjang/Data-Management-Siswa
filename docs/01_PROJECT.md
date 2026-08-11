@@ -3,24 +3,26 @@
 ## Project
 Student Management App — Flutter mobile application for managing and viewing student information.
 
-## Roles
+## Feature Priority Matrix
 
-### Client
-Primary purpose: consume student information and recap data.
+### Admin (Priority: ★★★★★ — Highest Operational Priority)
+Primary purpose: full student management with real-time Firebase backend sync.
+- Login
+- Dashboard (Operational Summary)
+- Full CRUD (Create, Read, Update, Delete)
+- Search
+- Class Filter
+- Delete Confirmation Dialog
+- Firebase Realtime/Firestore Integration
 
-### Admin
-Primary purpose: manage student records.
-
-Admin capabilities:
-- view student list
-- search
-- filter by class
-- create
-- read
-- update
-- delete
-- confirm delete
-- logout
+### Client (Priority: ★★☆☆☆ — Secondary Read-Only Module)
+Primary purpose: lightweight read-only consumption of student information and recap data.
+- Login
+- Home (Recap Summary)
+- Read-only Student List
+- Search
+- Class Filter
+- Profile & Session
 
 ## Functional scope
 

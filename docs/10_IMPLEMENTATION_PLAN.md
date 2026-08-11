@@ -36,22 +36,21 @@ flutter test
 
 Verify client/admin separation and invalid-login behavior.
 
-## Phase 3 — Client
+## Phase 3 — Client (Priority: ★★☆☆☆ — Lightweight Read-Only)
 - recap/home
-- approved navigation
+- read-only student list
+- search & filter
 - loading/error/empty
 
 Use real backend data in final behavior.
 
-## Phase 4 — Student Management
-Highest priority:
+## Phase 4 — Admin Student Management & Firebase (Priority: ★★★★★ — Core Focus)
+Highest operational priority:
 - list
 - search
 - class filter
-- loading
-- empty
-- search empty
-- error
+- Firebase integration & live sync
+- loading/empty/error states
 
 ## Phase 5 — Create
 - form

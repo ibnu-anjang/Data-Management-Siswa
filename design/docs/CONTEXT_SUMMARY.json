@@ -1,0 +1,8 @@
+{
+  "project": "data_management_siswa",
+  "module": "design",
+  "conversation_id": "0b9e4099-61f4-4ca3-908d-5a5bb1938f33",
+  "resume_command": "agy --conversation=0b9e4099-61f4-4ca3-908d-5a5bb1938f33",
+  "optimized": true,
+  "screens": ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11"]
+}
