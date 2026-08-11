@@ -1,0 +1,47 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ IDEA / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Flutter / Dart
+**/frontend/.dart_tool/
+**/frontend/.flutter-plugins
+**/frontend/.flutter-plugins-dependencies
+**/frontend/.packages
+**/frontend/.pub-cache/
+**/frontend/.pub/
+**/frontend/build/
+**/frontend/ios/Pods/
+**/frontend/ios/Runner.xcworkspace
+**/frontend/android/.gradle/
+**/frontend/android/app/debug/
+**/frontend/android/app/profile/
+**/frontend/android/app/release/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Environment / Credentials
+*.env
+*.keystore
+*.jks
+**/google-services.json
+**/GoogleService-Info.plist
