@@ -80,10 +80,10 @@ Aplikasi dirancang agar **100% Zero-Config** tanpa mewajibkan instalasi environm
 │   ├── styles.css            # Token Design System & Safe Area Layout
 │   ├── app.js                # State Machine & Logika Interaktivitas
 │   └── lucide.min.js         # Library icon offline-ready
-├── docs/                     # Dokumentasi Arsitektur & Panduan Pameran
+├── docs/                     # Dokumentasi Arsitektur & Panduan
+│   ├── ARCHITECTURE.md       # Blueprint arsitektur & skema data
 │   ├── PANDUAN_PAMERAN_STAND.md # Panduan 1-lembar operator stand
-│   ├── 13_UJIKOM_REPORT.md   # Laporan lengkap evaluasi akademik
-│   └── setup/                # Panduan teknis setup developer
+│   └── SETUP_GUIDE.md        # Panduan instalasi developer
 ├── frontend/                 # Kode Sumber Aplikasi Flutter
 │   ├── lib/                  # Screens (S01-S09), Core Models, State & Services
 │   └── test/                 # Automated Widget & Unit Tests
