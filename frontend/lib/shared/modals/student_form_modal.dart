@@ -232,13 +232,15 @@ class _StudentFormModalState extends State<StudentFormModal> {
   }
 
   static String _extractMajorFromClass(String className) {
-    final parts = className.trim().split(RegExp(r'\s+'));
-    if (parts.length >= 3) {
+    final trimmed = className.trim();
+    if (trimmed.isEmpty) return '';
+    final parts = trimmed.split(RegExp(r'\s+'));
+    if (parts.length <= 1) return trimmed;
+    final lastPart = parts.last;
+    if (RegExp(r'^[0-9A-Za-z]$').hasMatch(lastPart) && parts.length > 2) {
       return parts.sublist(1, parts.length - 1).join(' ');
-    } else if (parts.length == 2) {
-      return parts[1];
     }
-    return className;
+    return parts.sublist(1).join(' ');
   }
 
   void _handleSubmit() async {

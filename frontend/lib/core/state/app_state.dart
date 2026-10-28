@@ -37,9 +37,21 @@ const _defaultSchoolProfile = SchoolProfileModel(
 );
 
 const List<String> _defaultRombelList = [
-  "X IPA 1", "X IPA 2", "X IPS 1",
-  "XI IPA 1", "XI IPA 2", "XI IPS 1",
-  "XII IPA 1", "XII IPA 2", "XII IPS 1",
+  // Jurusan PPLG (X - XII)
+  "X PPLG 1", "X PPLG 2",
+  "XI PPLG 1", "XI PPLG 2",
+  "XII PPLG 1", "XII PPLG 2",
+
+  // Jurusan Farmasi (X - XII)
+  "X Farmasi 1", "X Farmasi 2",
+  "XI Farmasi 1", "XI Farmasi 2",
+  "XII Farmasi 1", "XII Farmasi 2",
+
+  // Jurusan Analis Kimia (SMK 4 Tahun: X - XIII)
+  "X Analis Kimia 1", "X Analis Kimia 2",
+  "XI Analis Kimia 1", "XI Analis Kimia 2",
+  "XII Analis Kimia 1", "XII Analis Kimia 2",
+  "XIII Analis Kimia 1", "XIII Analis Kimia 2",
 ];
 
 // ────────────────────────────────────────────────────────
