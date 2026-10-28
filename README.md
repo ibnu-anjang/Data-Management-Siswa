@@ -12,13 +12,12 @@
 
 ---
 
-## ⚡ Coba Langsung (Live Demo & Kiosk Mode)
+## ⚡ Live Interactive Demo
 
-Aplikasi dirancang agar **100% Zero-Config** tanpa mewajibkan instalasi environment Flutter/SDK di komputer pengunjung:
+Untuk melihat dan menguji coba antarmuka aplikasi secara instan tanpa perlu melakukan setup backend atau instalasi SDK:
 
-* **Laptop Windows (Stand Pameran):** Dobel-klik file [`BUKA_SEKOLAHKU_WINDOWS.bat`](BUKA_SEKOLAHKU_WINDOWS.bat) untuk langsung membuka simulator di Google Chrome / Microsoft Edge.
-* **Semua Platform (Web Browser):** Buka berkas [`design/index.html`](design/index.html) menggunakan browser apa pun.
-* **Panduan Stand Festival:** Panduan operasional 1-lembar tersedia di [`docs/PANDUAN_PAMERAN_STAND.md`](docs/PANDUAN_PAMERAN_STAND.md).
+1. Buka berkas [`design/index.html`](design/index.html) langsung melalui peramban web (*Google Chrome, Microsoft Edge, Firefox, Safari*).
+2. Anda akan disajikan **Simulator Ponsel 1:1 High-Fidelity** lengkap dengan kontrol simulasi peran (*Admin/Client*), tema (*Light/Dark*), dan simulasi state (*Loaded/Loading/Empty/Error*).
 
 ---
 
@@ -74,15 +73,13 @@ Aplikasi dirancang agar **100% Zero-Config** tanpa mewajibkan instalasi environm
 
 ```text
 .
-├── BUKA_SEKOLAHKU_WINDOWS.bat # Launcher otomatis untuk pameran di Windows
 ├── design/                   # Prototipe Web Simulator 1:1 High-Fidelity
-│   ├── index.html            # Simulator HP & Panel Demo Terintegrasi
+│   ├── index.html            # Simulator Mobile Frame & Handoff Panel
 │   ├── styles.css            # Token Design System & Safe Area Layout
 │   ├── app.js                # State Machine & Logika Interaktivitas
 │   └── lucide.min.js         # Library icon offline-ready
-├── docs/                     # Dokumentasi Arsitektur & Panduan
+├── docs/                     # Dokumentasi Teknis
 │   ├── ARCHITECTURE.md       # Blueprint arsitektur & skema data
-│   ├── PANDUAN_PAMERAN_STAND.md # Panduan 1-lembar operator stand
 │   └── SETUP_GUIDE.md        # Panduan instalasi developer
 ├── frontend/                 # Kode Sumber Aplikasi Flutter
 │   ├── lib/                  # Screens (S01-S09), Core Models, State & Services
