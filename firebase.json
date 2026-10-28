@@ -13,7 +13,7 @@
     ],
     "headers": [
       {
-        "source": "/**@(index.html|flutter_bootstrap.js|flutter_service_worker.js|manifest.json)",
+        "source": "/**@(index.html|flutter_bootstrap.js|flutter_service_worker.js)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -22,11 +22,29 @@
         ]
       },
       {
+        "source": "/assets/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=604800, immutable"
+          }
+        ]
+      },
+      {
+        "source": "/**@(*.png|*.ico|*.svg|*.wasm)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
+      },
+      {
         "source": "**",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "no-cache, no-store, must-revalidate"
+            "value": "no-cache"
           }
         ]
       }
