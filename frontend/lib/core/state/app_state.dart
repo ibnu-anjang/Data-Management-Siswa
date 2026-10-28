@@ -17,8 +17,7 @@ const List<String> _adminEmails = [
 /// Checks whether a given email has admin privileges
 bool _isAdminEmail(String email) {
   final lower = email.trim().toLowerCase();
-  // Also allow any email containing 'admin' for demo convenience
-  return _adminEmails.contains(lower) || lower.contains('admin');
+  return _adminEmails.contains(lower);
 }
 
 // ────────────────────────────────────────────────────────

@@ -12,12 +12,15 @@
 
 ---
 
-## ⚡ Live Interactive Demo
+## ⚡ Live Demo (Buka Langsung di HP / Laptop)
 
-Untuk melihat dan menguji coba antarmuka aplikasi secara instan tanpa perlu melakukan setup backend atau instalasi SDK:
+Aplikasi dapat langsung diakses dan diuji coba secara online tanpa perlu instalasi apa pun:
 
-1. Buka berkas [`design/index.html`](design/index.html) langsung melalui peramban web (*Google Chrome, Microsoft Edge, Firefox, Safari*).
-2. Anda akan disajikan **Simulator Ponsel 1:1 High-Fidelity** lengkap dengan kontrol simulasi peran (*Admin/Client*), tema (*Light/Dark*), dan simulasi state (*Loaded/Loading/Empty/Error*).
+* 🌐 **Live Web Application (Firebase Cloud):**  
+  👉 **[https://data-management-siswa.web.app](https://data-management-siswa.web.app)**  
+  *(Aplikasi Flutter produksi yang terhubung langsung dengan Google Cloud Firestore & Firebase Auth).*
+* 📱 **Interactive Web Simulator 1:1:**  
+  👉 Buka berkas [`design/index.html`](design/index.html) di peramban web atau akses melalui GitHub Pages untuk simulasi ponsel interaktif dengan panel kontrol peran (*Admin/Client*) dan tema (*Light/Dark*).
 
 ---
 

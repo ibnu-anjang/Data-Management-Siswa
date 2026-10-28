@@ -30,6 +30,7 @@ migrate_working_dir/
 **/frontend/ios/Pods/
 **/frontend/ios/Runner.xcworkspace
 **/frontend/android/.gradle/
+**/frontend/android/.kotlin/
 **/frontend/android/app/debug/
 **/frontend/android/app/profile/
 **/frontend/android/app/release/
