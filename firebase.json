@@ -4,6 +4,7 @@
     "indexes": "firebase/firestore.indexes.json"
   },
   "hosting": {
+    "site": "sekolahku-data-siswa",
     "public": "frontend/build/web",
     "ignore": [
       "firebase.json",

@@ -17,7 +17,7 @@
 Aplikasi dapat langsung diakses dan diuji coba secara online tanpa perlu instalasi apa pun:
 
 * 🌐 **Live Web Application (Firebase Cloud):**  
-  👉 **[https://sekolahku-app-a3895.web.app](https://sekolahku-app-a3895.web.app)**  
+  👉 **[https://sekolahku-data-siswa.web.app](https://sekolahku-data-siswa.web.app)**  
   *(Aplikasi Flutter produksi yang terhubung langsung dengan Google Cloud Firestore & Firebase Auth).*
 * 📱 **Interactive Web Simulator 1:1:**  
   👉 Buka berkas [`design/index.html`](design/index.html) di peramban web atau akses melalui GitHub Pages untuk simulasi ponsel interaktif dengan panel kontrol peran (*Admin/Client*) dan tema (*Light/Dark*).
