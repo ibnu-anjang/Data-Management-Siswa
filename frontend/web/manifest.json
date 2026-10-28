@@ -1,11 +1,11 @@
 {
-    "name": "data_management_siswa",
-    "short_name": "data_management_siswa",
+    "name": "SekolahKu — Sistem Manajemen Data Siswa",
+    "short_name": "SekolahKu",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#2563EB",
+    "theme_color": "#2563EB",
+    "description": "Platform modern sistem manajemen data siswa dan administrasi sekolah.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
