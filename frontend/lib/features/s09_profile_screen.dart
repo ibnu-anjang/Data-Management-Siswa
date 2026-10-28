@@ -337,21 +337,23 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.edit_outlined, size: 14),
-                            label: const Text('Ubah Identitas', style: TextStyle(fontSize: 12)),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          if (isAdmin) ...[
+                            const SizedBox(width: 8),
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.edit_outlined, size: 14),
+                              label: const Text('Ubah Identitas', style: TextStyle(fontSize: 12)),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              ),
+                              onPressed: () {
+                                SchoolProfileModal.show(
+                                  context: context,
+                                  initialProfile: school,
+                                  onSubmit: (updated) => widget.appState.updateSchoolProfile(updated),
+                                );
+                              },
                             ),
-                            onPressed: () {
-                              SchoolProfileModal.show(
-                                context: context,
-                                initialProfile: school,
-                                onSubmit: (updated) => appState.updateSchoolProfile(updated),
-                              );
-                            },
-                          ),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 8),

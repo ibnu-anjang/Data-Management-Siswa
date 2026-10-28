@@ -103,6 +103,9 @@ class _SchoolProfileModalState extends State<SchoolProfileModal> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final mediaQuery = MediaQuery.of(context);
+    final availableHeight = mediaQuery.size.height - mediaQuery.viewInsets.bottom - 48;
+    final maxHeight = availableHeight > 280 ? availableHeight : 280.0;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -113,7 +116,7 @@ class _SchoolProfileModalState extends State<SchoolProfileModal> {
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 520,
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
+          maxHeight: maxHeight,
         ),
         child: Column(
           children: [
@@ -155,6 +158,7 @@ class _SchoolProfileModalState extends State<SchoolProfileModal> {
             // Form Body
             Expanded(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

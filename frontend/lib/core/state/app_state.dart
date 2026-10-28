@@ -306,10 +306,14 @@ class AppState extends ChangeNotifier {
   // ────────────────────────────────────────────────────────
 
   Future<void> updateSchoolProfile(SchoolProfileModel newProfile) async {
-    _schoolProfile = newProfile;
-    notifyListeners();
-    await _firestoreService.saveSchoolProfile(newProfile);
-    showToast('Identitas Sekolah Berhasil Diperbarui');
+    try {
+      _schoolProfile = newProfile;
+      notifyListeners();
+      await _firestoreService.saveSchoolProfile(newProfile);
+      showToast('Identitas Sekolah Berhasil Disimpan ke Database!');
+    } catch (e) {
+      showToast('Gagal menyimpan identitas ke database: $e');
+    }
   }
 
   // ────────────────────────────────────────────────────────

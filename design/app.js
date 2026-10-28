@@ -56,6 +56,12 @@ let schoolProfile = {
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const savedProfile = localStorage.getItem('sekolahku_schoolProfile');
+    if (savedProfile) {
+      schoolProfile = Object.assign(schoolProfile, JSON.parse(savedProfile));
+    }
+  } catch(e) {}
   lucide.createIcons();
   setThemeMode(theme);
   updateRoleButtonsUI();
@@ -1285,6 +1291,10 @@ function handleSchoolProfileSubmit(e) {
   schoolProfile.semester = document.getElementById('inputSemester').value || schoolProfile.semester;
   schoolProfile.principalName = document.getElementById('inputPrincipalName').value.trim() || schoolProfile.principalName;
   schoolProfile.principalNip = document.getElementById('inputPrincipalNIP').value.trim() || schoolProfile.principalNip;
+
+  try {
+    localStorage.setItem('sekolahku_schoolProfile', JSON.stringify(schoolProfile));
+  } catch(e) {}
 
   showToast("Identitas & Tahun Ajaran berhasil diperbarui!");
   closeModal('schoolProfileModal');

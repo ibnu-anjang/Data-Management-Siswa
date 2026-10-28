@@ -435,29 +435,42 @@ class _PrintDialogModalState extends State<PrintDialogModal> {
             ),
             const Divider(height: 1),
 
-            // Actions: Tutup, Cetak ke Printer, dan Langsung Download PDF
+            // Actions: Mobile-friendly full width Download PDF and side-by-side secondary actions
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.end,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SecondaryButton(
-                    label: 'Tutup',
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  SecondaryButton(
-                    label: _isPrinting ? 'Mempersiapkan...' : 'Cetak Printer',
-                    icon: Icons.print_outlined,
-                    onPressed: (_isDownloading || _isPrinting) ? null : _handlePrintDirect,
-                  ),
+                  // Primary Action: Download PDF (Full width, big thumb target)
                   PrimaryButton(
-                    label: _isDownloading ? 'Mengunduh PDF...' : 'Download PDF',
+                    label: _isDownloading ? 'Mengunduh PDF...' : 'Download File PDF',
                     icon: Icons.download_rounded,
                     isLoading: _isDownloading,
-                    fullWidth: false,
+                    fullWidth: true,
                     onPressed: (_isDownloading || _isPrinting) ? null : _handleDownloadPdf,
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Secondary Actions: Cetak Printer & Tutup side-by-side
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SecondaryButton(
+                          label: 'Tutup',
+                          fullWidth: true,
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SecondaryButton(
+                          label: _isPrinting ? 'Mempersiapkan...' : 'Cetak Printer',
+                          icon: Icons.print_outlined,
+                          fullWidth: true,
+                          onPressed: (_isDownloading || _isPrinting) ? null : _handlePrintDirect,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

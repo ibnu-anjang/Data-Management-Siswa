@@ -45,7 +45,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
   late TextEditingController _nisnController;
   late TextEditingController _nisController;
   late TextEditingController _birthPlaceController;
-  late TextEditingController _majorController;
   late TextEditingController _phoneController;
   late TextEditingController _addressController;
   late TextEditingController _birthDateController;
@@ -61,7 +60,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
   String? _nisnError;
   String? _nisError;
   String? _birthPlaceError;
-  String? _majorError;
   String? _classError;
   String? _phoneError;
   String? _birthDateError;
@@ -84,7 +82,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
     _nisnController = TextEditingController(text: s?.nisn ?? '');
     _nisController = TextEditingController(text: s?.nis ?? '');
     _birthPlaceController = TextEditingController(text: s?.birthPlace ?? '');
-    _majorController = TextEditingController(text: s?.major ?? '');
     _phoneController = TextEditingController(text: s?.phone ?? '');
     _addressController = TextEditingController(text: s?.address ?? '');
     _birthDateController = TextEditingController(text: s?.birthDate ?? '15 Mei 2007');
@@ -109,7 +106,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
     _nisnController.dispose();
     _nisController.dispose();
     _birthPlaceController.dispose();
-    _majorController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
     _birthDateController.dispose();
@@ -235,6 +231,16 @@ class _StudentFormModalState extends State<StudentFormModal> {
     );
   }
 
+  static String _extractMajorFromClass(String className) {
+    final parts = className.trim().split(RegExp(r'\s+'));
+    if (parts.length >= 3) {
+      return parts.sublist(1, parts.length - 1).join(' ');
+    } else if (parts.length == 2) {
+      return parts[1];
+    }
+    return className;
+  }
+
   void _handleSubmit() async {
     if (_isUploading) return;
 
@@ -242,7 +248,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
     final nisnTrim = _nisnController.text.trim();
     final nisTrim = _nisController.text.trim();
     final birthPlaceTrim = _birthPlaceController.text.trim();
-    final majorTrim = _majorController.text.trim();
     final phoneTrim = _phoneController.text.trim();
     final addressTrim = _addressController.text.trim();
     final birthDateTrim = _birthDateController.text.trim();
@@ -254,7 +259,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
         nisnTrim.isEmpty ||
         nisTrim.isEmpty ||
         birthPlaceTrim.isEmpty ||
-        majorTrim.isEmpty ||
         phoneTrim.isEmpty ||
         addressTrim.isEmpty ||
         birthDateTrim.isEmpty ||
@@ -277,7 +281,6 @@ class _StudentFormModalState extends State<StudentFormModal> {
         _nisnError = nisnTrim.isEmpty ? 'Wajib diisi' : null;
         _nisError = nisTrim.isEmpty ? 'Wajib diisi' : null;
         _birthPlaceError = birthPlaceTrim.isEmpty ? 'Wajib diisi' : null;
-        _majorError = majorTrim.isEmpty ? 'Wajib diisi' : null;
         _phoneError = phoneTrim.isEmpty ? 'Wajib diisi' : null;
         _addressError = addressTrim.isEmpty ? 'Wajib diisi' : null;
         _birthDateError = birthDateTrim.isEmpty ? 'Wajib diisi' : null;
@@ -322,12 +325,13 @@ class _StudentFormModalState extends State<StudentFormModal> {
     }
 
     final newStudent = StudentModel(
+      docId: widget.initialStudent?.docId ?? '',
       id: widget.initialStudent?.id ?? 0,
       name: nameTrim,
       nisn: nisnTrim,
       nis: nisTrim,
       className: _selectedClass!,
-      major: majorTrim,
+      major: _extractMajorFromClass(_selectedClass!),
       gender: _selectedGender,
       birthPlace: birthPlaceTrim,
       birthDate: birthDateTrim,
@@ -527,40 +531,24 @@ class _StudentFormModalState extends State<StudentFormModal> {
                     ),
                     const SizedBox(height: 12),
 
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: AppDropdown<String>(
-                            label: 'Kelas *',
-                            value: _selectedClass,
-                            errorText: _classError,
-                            items: widget.rombelList.map((cls) {
-                              return DropdownMenuItem(
-                                value: cls,
-                                child: Text('Kelas $cls'),
-                              );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) {
-                                setState(() {
-                                  _selectedClass = val;
-                                  _classError = null;
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: AppTextField(
-                            label: 'Jurusan *',
-                            hint: 'Misal: RPL',
-                            controller: _majorController,
-                            errorText: _majorError,
-                          ),
-                        ),
-                      ],
+                    AppDropdown<String>(
+                      label: 'Kelas (Rombel) *',
+                      value: _selectedClass,
+                      errorText: _classError,
+                      items: widget.rombelList.map((cls) {
+                        return DropdownMenuItem(
+                          value: cls,
+                          child: Text('Kelas $cls'),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() {
+                            _selectedClass = val;
+                            _classError = null;
+                          });
+                        }
+                      },
                     ),
                     const SizedBox(height: 12),
 

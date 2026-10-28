@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
 
-class AppTextField extends StatelessWidget {
+class AppTextField extends StatefulWidget {
   final String label;
   final String? hint;
   final TextEditingController? controller;
@@ -18,6 +18,7 @@ class AppTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final bool autofocus;
   final EdgeInsets scrollPadding;
+  final FocusNode? focusNode;
 
   const AppTextField({
     super.key,
@@ -35,8 +36,76 @@ class AppTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.autofocus = false,
-    this.scrollPadding = const EdgeInsets.only(bottom: 120, top: 20),
+    this.scrollPadding = const EdgeInsets.only(bottom: 160, top: 40),
+    this.focusNode,
   });
+
+  @override
+  State<AppTextField> createState() => _AppTextFieldState();
+}
+
+class _AppTextFieldState extends State<AppTextField> {
+  late FocusNode _focusNode;
+  bool _internalFocusNode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focusNode != null) {
+      _focusNode = widget.focusNode!;
+    } else {
+      _focusNode = FocusNode();
+      _internalFocusNode = true;
+    }
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(AppTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusNode.removeListener(_handleFocusChange);
+      if (_internalFocusNode) {
+        _focusNode.dispose();
+      }
+      if (widget.focusNode != null) {
+        _focusNode = widget.focusNode!;
+        _internalFocusNode = false;
+      } else {
+        _focusNode = FocusNode();
+        _internalFocusNode = true;
+      }
+      _focusNode.addListener(_handleFocusChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    if (_internalFocusNode) {
+      _focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void _scrollToCenter() {
+    Future.delayed(const Duration(milliseconds: 320), () {
+      if (mounted && _focusNode.hasFocus) {
+        Scrollable.ensureVisible(
+          context,
+          alignment: 0.35,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+  }
+
+  void _handleFocusChange() {
+    if (_focusNode.hasFocus) {
+      _scrollToCenter();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +116,7 @@ class AppTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -58,25 +127,29 @@ class AppTextField extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         TextField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          onChanged: onChanged,
-          inputFormatters: inputFormatters,
-          readOnly: readOnly,
-          onTap: onTap,
-          autofocus: autofocus,
-          scrollPadding: scrollPadding,
+          controller: widget.controller,
+          focusNode: _focusNode,
+          obscureText: widget.obscureText,
+          keyboardType: widget.keyboardType,
+          maxLines: widget.maxLines,
+          onChanged: widget.onChanged,
+          inputFormatters: widget.inputFormatters,
+          readOnly: widget.readOnly,
+          onTap: () {
+            widget.onTap?.call();
+            _scrollToCenter();
+          },
+          autofocus: widget.autofocus,
+          scrollPadding: widget.scrollPadding,
           style: TextStyle(
             fontSize: 14,
             color: labelColor,
           ),
           decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            errorText: errorText,
+            hintText: widget.hint,
+            prefixIcon: widget.prefixIcon,
+            suffixIcon: widget.suffixIcon,
+            errorText: widget.errorText,
           ),
         ),
       ],
