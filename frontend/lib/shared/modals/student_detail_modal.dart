@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/models/student_model.dart';
 import '../widgets/app_buttons.dart';
+import '../widgets/app_avatar.dart';
 
 class StudentDetailModal extends StatelessWidget {
   final StudentModel student;
@@ -101,60 +102,17 @@ class StudentDetailModal extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            alignment: Alignment.center,
-                            child: student.photoUrl.isNotEmpty
-                                ? Image.network(
-                                    student.photoUrl,
-                                    width: 72,
-                                    height: 72,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        color: AppColors.primary,
-                                        alignment: Alignment.center,
-                                        child: const SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.5,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) => Text(
-                                      student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
-                                      style: const TextStyle(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
-                                    style: const TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                          AppAvatar(
+                            name: student.name,
+                            photoUrl: student.photoUrl,
+                            size: 72,
+                            borderRadius: 18,
+                            backgroundColor: AppColors.primary,
+                            textColor: Colors.white,
+                            fontSize: 28,
+                            showBorder: true,
+                            borderColor: AppColors.primary.withValues(alpha: 0.3),
+                            borderWidth: 2,
                           ),
                           const SizedBox(height: 10),
                           Text(

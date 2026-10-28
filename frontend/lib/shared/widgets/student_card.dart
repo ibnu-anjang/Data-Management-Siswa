@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/models/student_model.dart';
+import 'app_avatar.dart';
 
 class StudentCard extends StatelessWidget {
   final StudentModel student;
@@ -42,53 +43,14 @@ class StudentCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Student Avatar 40px with photo or initial letter
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                clipBehavior: Clip.antiAlias,
-                alignment: Alignment.center,
-                child: student.photoUrl.isNotEmpty
-                    ? Image.network(
-                        student.photoUrl,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            color: AppColors.primaryLight,
-                            alignment: Alignment.center,
-                            child: const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) => Text(
-                          student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
+              AppAvatar(
+                name: student.name,
+                photoUrl: student.photoUrl,
+                size: 40,
+                borderRadius: 10,
+                backgroundColor: AppColors.primaryLight,
+                textColor: AppColors.primary,
+                fontSize: 15,
               ),
               const SizedBox(width: 12),
 

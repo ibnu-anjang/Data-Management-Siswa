@@ -6,6 +6,7 @@ import '../../core/models/student_model.dart';
 import '../../core/services/cloudinary_service.dart';
 import '../widgets/app_buttons.dart';
 import '../widgets/app_text_field.dart';
+import '../widgets/app_avatar.dart';
 
 class StudentFormModal extends StatefulWidget {
   final StudentModel? initialStudent;
@@ -446,23 +447,16 @@ class _StudentFormModalState extends State<StudentFormModal> {
                                             width: 86,
                                             height: 86,
                                           )
-                                        : (_photoUrl.isNotEmpty
-                                            ? Image.network(
-                                                _photoUrl,
-                                                fit: BoxFit.cover,
-                                                width: 86,
-                                                height: 86,
-                                                errorBuilder: (context, error, stackTrace) => const Icon(
-                                                  Icons.person_rounded,
-                                                  size: 46,
-                                                  color: AppColors.primary,
-                                                ),
-                                              )
-                                            : const Icon(
-                                                Icons.person_rounded,
-                                                size: 46,
-                                                color: AppColors.primary,
-                                              )),
+                                        : AppAvatar(
+                                            name: _nameController.text.isNotEmpty
+                                                ? _nameController.text
+                                                : (widget.initialStudent?.name ?? 'Siswa'),
+                                            photoUrl: _photoUrl,
+                                            size: 86,
+                                            backgroundColor: AppColors.primaryLight,
+                                            textColor: AppColors.primary,
+                                            fontSize: 34,
+                                          ),
                                   ),
                                 ),
                               ),

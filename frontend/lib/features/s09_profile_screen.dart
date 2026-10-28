@@ -5,6 +5,7 @@ import '../core/services/cloudinary_service.dart';
 import '../core/state/app_state.dart';
 import '../shared/widgets/app_bottom_nav_bar.dart';
 import '../shared/widgets/app_buttons.dart';
+import '../shared/widgets/app_avatar.dart';
 import '../shared/modals/rombel_form_modal.dart';
 import '../shared/modals/school_profile_modal.dart';
 
@@ -67,10 +68,19 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
                 if (widget.appState.userPhotoUrl.isNotEmpty)
                   ListTile(
                     leading: const Icon(Icons.delete_outline_rounded, color: AppColors.danger),
-                    title: const Text('Hapus Foto Profil', style: TextStyle(color: AppColors.danger)),
+                    title: const Text('Hapus Foto Profil (Kembali ke Inisial)', style: TextStyle(color: AppColors.danger)),
                     onTap: () async {
                       Navigator.pop(ctx);
                       await widget.appState.updateUserPhoto('');
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Foto profil berhasil dihapus. Kembali ke foto inisial.'),
+                            backgroundColor: AppColors.primary,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
                     },
                   ),
               ],
@@ -199,58 +209,38 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
                               InkWell(
                                 onTap: () => _handlePickProfilePhoto(),
                                 borderRadius: BorderRadius.circular(32),
-                                child: Container(
-                                  width: 52,
-                                  height: 52,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isAdmin ? AppColors.primary : AppColors.success,
-                                    border: Border.all(
-                                      color: isAdmin ? AppColors.primary : AppColors.success,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: ClipOval(
-                                    child: _isUploadingPhoto
-                                        ? const Center(
-                                            child: SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white,
-                                              ),
+                                child: _isUploadingPhoto
+                                    ? Container(
+                                        width: 52,
+                                        height: 52,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: isAdmin ? AppColors.primary : AppColors.success,
+                                        ),
+                                        child: const Center(
+                                          child: SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
                                             ),
-                                          )
-                                        : (appState.userPhotoUrl.isNotEmpty
-                                            ? Image.network(
-                                                appState.userPhotoUrl,
-                                                fit: BoxFit.cover,
-                                                width: 52,
-                                                height: 52,
-                                                errorBuilder: (ctx, err, st) => Center(
-                                                  child: Text(
-                                                    isAdmin ? 'ADM' : 'CLT',
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w700,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Center(
-                                                child: Text(
-                                                  isAdmin ? 'ADM' : 'CLT',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              )),
-                                  ),
-                                ),
+                                          ),
+                                        ),
+                                      )
+                                    : AppAvatar(
+                                        name: appState.userName.isNotEmpty
+                                            ? appState.userName
+                                            : (isAdmin ? 'Administrator' : 'Client'),
+                                        photoUrl: appState.userPhotoUrl,
+                                        size: 52,
+                                        backgroundColor: isAdmin ? AppColors.primary : AppColors.success,
+                                        textColor: Colors.white,
+                                        fontSize: 20,
+                                        showBorder: true,
+                                        borderColor: isAdmin ? AppColors.primary : AppColors.success,
+                                        borderWidth: 2,
+                                      ),
                               ),
                               Positioned(
                                 bottom: 0,

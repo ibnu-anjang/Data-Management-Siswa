@@ -75,11 +75,19 @@ class AppState extends ChangeNotifier {
   String get userEmail => _firebaseUser?.email ?? '';
   String get userName => _firebaseUser?.displayName ?? userEmail.split('@').first;
   String get userPhotoUrl => _firebaseUser?.photoURL ?? '';
+  String get userInitial {
+    final name = userName.trim();
+    if (name.isNotEmpty) return name[0].toUpperCase();
+    final email = userEmail.trim();
+    if (email.isNotEmpty) return email[0].toUpperCase();
+    return _currentRole == AppRole.admin ? 'A' : 'C';
+  }
 
   Future<void> updateUserPhoto(String photoUrl) async {
     final user = _auth.currentUser;
     if (user != null) {
       await user.updatePhotoURL(photoUrl.isEmpty ? null : photoUrl);
+      await user.reload();
       _firebaseUser = _auth.currentUser;
       notifyListeners();
     }

@@ -3,6 +3,7 @@ import '../app/theme/app_colors.dart';
 import '../core/state/app_state.dart';
 import '../shared/widgets/app_bottom_nav_bar.dart';
 import '../shared/widgets/app_buttons.dart';
+import '../shared/widgets/app_avatar.dart';
 import '../shared/modals/student_form_modal.dart';
 import '../shared/modals/print_dialog.dart';
 import '../shared/modals/school_profile_modal.dart';
@@ -117,17 +118,17 @@ class S04AdminDashboardScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (appState.userPhotoUrl.isNotEmpty) ...[
-                          ClipOval(
-                            child: Image.network(
-                              appState.userPhotoUrl,
-                              width: 36,
-                              height: 36,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                        ],
+                        AppAvatar(
+                          name: appState.userName.isNotEmpty ? appState.userName : 'Administrator',
+                          photoUrl: appState.userPhotoUrl,
+                          size: 38,
+                          backgroundColor: AppColors.primary,
+                          textColor: Colors.white,
+                          fontSize: 16,
+                          showBorder: true,
+                          borderColor: AppColors.primary.withValues(alpha: 0.3),
+                        ),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

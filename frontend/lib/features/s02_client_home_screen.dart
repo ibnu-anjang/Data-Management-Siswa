@@ -3,6 +3,7 @@ import '../app/theme/app_colors.dart';
 import '../core/state/app_state.dart';
 import '../shared/widgets/app_bottom_nav_bar.dart';
 import '../shared/widgets/app_buttons.dart';
+import '../shared/widgets/app_avatar.dart';
 
 class S02ClientHomeScreen extends StatelessWidget {
   final AppState appState;
@@ -34,28 +35,17 @@ class S02ClientHomeScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  if (appState.userPhotoUrl.isNotEmpty) ...[
-                    ClipOval(
-                      child: Image.network(
-                        appState.userPhotoUrl,
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                  ] else ...[
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.school_rounded, color: AppColors.primary, size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                  ],
+                  AppAvatar(
+                    name: appState.userName.isNotEmpty ? appState.userName : 'Client',
+                    photoUrl: appState.userPhotoUrl,
+                    size: 38,
+                    backgroundColor: AppColors.primary,
+                    textColor: Colors.white,
+                    fontSize: 16,
+                    showBorder: true,
+                    borderColor: AppColors.primary.withValues(alpha: 0.3),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

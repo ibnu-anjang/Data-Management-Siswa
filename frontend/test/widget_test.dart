@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:data_management_siswa/main.dart';
 import 'package:data_management_siswa/core/models/student_model.dart';
 import 'package:data_management_siswa/shared/modals/student_form_modal.dart';
+import 'package:data_management_siswa/shared/widgets/app_avatar.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -156,6 +157,40 @@ void main() {
       final updated = student.copyWith(photoUrl: 'https://res.cloudinary.com/hbzlmngj/new_photo.jpg');
       expect(updated.photoUrl, 'https://res.cloudinary.com/hbzlmngj/new_photo.jpg');
       expect(updated.name, 'Ahmad');
+    });
+  });
+
+  group('AppAvatar Initial Fallback Tests', () {
+    testWidgets('AppAvatar renders capitalized initial letter when photoUrl is empty', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppAvatar(
+              name: 'Farhan Hakim',
+              photoUrl: '',
+              size: 40,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('F'), findsOneWidget);
+    });
+
+    testWidgets('AppAvatar falls back to default initial S if name is empty', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppAvatar(
+              name: '',
+              photoUrl: '',
+              size: 40,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('S'), findsOneWidget);
     });
   });
 }
