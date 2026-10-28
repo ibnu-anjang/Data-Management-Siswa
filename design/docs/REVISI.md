@@ -3,10 +3,6 @@
 > **Proyek:** Pemrograman Mobile (PEM-MOB) — Data Management Siswa (SekolahKu)  
 > **Lokasi Prototipe:** `design/index.html`  
 > **Status:** 100% Verified, Clean & Production-Ready Prototype  
-> **Command Resume Percakapan AI:**  
-> ```bash
-> agy --conversation=0b9e4099-61f4-4ca3-908d-5a5bb1938f33
-> ```
 
 ---
 
@@ -33,24 +29,26 @@
 | **10** | **Keterhubungan Layar S01–S11** | Beberapa tab terhambat proteksi | Tombol toolbar `S01` s/d `S11` **100% clickable** dengan auto-role switch & active highlight | ✅ Selesai |
 | **11** | **Proteksi Loading & Error State** | Pengguna bisa klik aksi saat loading | **State Permission Guard** (Memblokir CRUD saat `loading` / `error` dengan *toast*) | ✅ Selesai |
 | **12** | **Proteksi Empty State** | Bisa Edit/Hapus saat data kosong | **Empty State Guard** (Memblokir Edit/Hapus saat data kosong dengan *toast*) | ✅ Selesai |
-| **13** | **Inisialisasi Fresh Refresh** | Tab Admin & Client bercampur awal | Inisialisasi `updateRoleButtonsUI()` saat `DOMContentLoaded` & modal auto-close | ✅ Selesai |
-| **14** | **Estimasi Timeline Development** | Belum ada estimasi pengerjaan | **Fullstack Timeline Card** (14–19 Hari Kerja / 3–4 Minggu untuk Senior Fullstack Dev) | ✅ Selesai |
+| **15** | **Branding Logo Dashboard** | Logo Login terpisah dari Dashboard | **Branded Top App Bar** di S02 (Client Home) & S04 (Admin Dashboard) membawa Logo SekolahKu | ✅ Selesai |
+| **16** | **Fitur Cetak (Print) Laporan** | Tidak ada opsi cetak laporan | **Tombol Cetak & Print Preview** di S03 & S05 dengan Kop Sekolah & `@media print` CSS | ✅ Selesai |
+| **17** | **Detail Siswa Read-Only (`S12`)** | Tidak ada tampilan detail read-only | **Modal Detail Siswa S12** menampilkan info lengkap (nis, tgl lahir, agama, alamat, wali) tanpa opsi edit | ✅ Selesai |
 
 ---
 
-## 📌 Pemetaan Lengkap Kode Layar (S01 – S11)
+## 📌 Pemetaan Lengkap Kode Layar (S01 – S12)
 
 1. **`S01` — Login Screen:** Form login, toggle eye password, quick role buttons, & quick theme toggle.
-2. **`S02` — Client Home / Recap:** Ringkasan total siswa & daftar kelas aktif (Read-Only).
-3. **`S03` — Client Student List:** List siswa read-only dengan search & drag-to-scroll filter chips.
-4. **`S04` — Admin Dashboard:** Ringkasan statistik operasional admin & quick action button.
-5. **`S05` — Admin Student Management:** List siswa admin dengan tombol Edit & Hapus Merah.
+2. **`S02` — Client Home / Recap:** Ringkasan total siswa & daftar kelas aktif berlogo SekolahKu (Read-Only).
+3. **`S03` — Client Student List:** List siswa read-only dengan search, filter chips, tombol Cetak, & klik card ke S12.
+4. **`S04` — Admin Dashboard:** Ringkasan statistik operasional admin berlogo SekolahKu & quick action button.
+5. **`S05` — Admin Student Management:** List siswa admin dengan tombol Edit, Hapus, Cetak, & klik card ke S12.
 6. **`S06` — Add Student Form (Modal):** Form modal input siswa baru.
 7. **`S07` — Edit Student Form (Modal):** Form modal ubah data siswa.
 8. **`S08` — Delete Confirmation Dialog (Modal):** Dialog konfirmasi hapus data siswa.
 9. **`S09` — Account / Profile / Settings:** Pengaturan akun, role, tema, & manajemen Rombel.
 10. **`S10` — Add Rombel Form (Modal — `+ Rombel`):** Modal input kelas baru.
 11. **`S11` — Edit Rombel Form (Modal — `✎ Rombel`):** Modal ubah nama kelas dengan sinkronisasi otomatis.
+12. **`S12` — Student Detail Screen / Modal (Read-Only):** Modal detail informasi siswa lengkap & read-only.
 
 ---
 

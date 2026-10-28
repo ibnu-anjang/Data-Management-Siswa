@@ -11,47 +11,84 @@ let currentScreenState = 'loaded'; // 'loaded', 'loading', 'empty', 'error'
 // Search and Filter State
 let clientSearchQuery = '';
 let clientFilterClass = 'all';
+let clientFilterGender = 'all';
+let clientFilterStatus = 'all';
+
 let adminSearchQuery = '';
 let adminFilterClass = 'all';
+let adminFilterGender = 'all';
+let adminFilterStatus = 'all';
+
+let activeFilterTargetRole = 'admin';
 
 // Target for deletion
 let deleteTargetId = null;
 
 // Mock Source of Truth Data
 let studentsData = [
-  { id: 101, name: "Ahmad Rafli", nis: "210101", class: "XII IPA 1", gender: "Laki-laki", address: "Jl. Sudirman No. 10" },
-  { id: 102, name: "Siti Nurhaliza", nis: "210102", class: "XII IPA 1", gender: "Perempuan", address: "Jl. Melati No. 5" },
-  { id: 103, name: "Budi Santoso", nis: "210103", class: "XII IPA 2", gender: "Laki-laki", address: "Jl. Mawar No. 12" },
-  { id: 104, name: "Dina Mariana", nis: "210104", class: "XII IPS 1", gender: "Perempuan", address: "Jl. Anggrek No. 8" },
-  { id: 105, name: "Eko Prasetyo", nis: "210105", class: "XI IPA 1", gender: "Laki-laki", address: "Jl. Pahlawan No. 2" },
-  { id: 106, name: "Fajar Hidayat", nis: "210106", class: "XI IPA 2", gender: "Laki-laki", address: "Jl. Pemuda No. 15" },
-  { id: 107, name: "Gita Gutawa", nis: "210107", class: "XI IPS 1", gender: "Perempuan", address: "Jl. Cendrawasih No. 4" },
-  { id: 108, name: "Hendra Wijaya", nis: "210108", class: "X IPA 1", gender: "Laki-laki", address: "Jl. Gajah Mada No. 9" },
-  { id: 109, name: "Indah Permata", nis: "210109", class: "X IPA 2", gender: "Perempuan", address: "Jl. Hayam Wuruk No. 21" },
-  { id: 110, name: "Joko Widodo", nis: "210110", class: "X IPS 1", gender: "Laki-laki", address: "Jl. Veteran No. 33" }
+  { id: 101, name: "Ahmad Rafli", nis: "210101", class: "XII IPA 1", gender: "Laki-laki", address: "Jl. Sudirman No. 10", birthDate: "15 Mei 2007", religion: "Islam", guardianName: "Bpk. Subagyo", guardianPhone: "0812-3456-7890", status: "Aktif" },
+  { id: 102, name: "Siti Nurhaliza", nis: "210102", class: "XII IPA 1", gender: "Perempuan", address: "Jl. Melati No. 5", birthDate: "20 Agustus 2007", religion: "Islam", guardianName: "Ibu Rahmawati", guardianPhone: "0813-8877-6655", status: "Aktif" },
+  { id: 103, name: "Budi Santoso", nis: "210103", class: "XII IPA 2", gender: "Laki-laki", address: "Jl. Mawar No. 12", birthDate: "10 Januari 2007", religion: "Kristen", guardianName: "Bpk. Santoso", guardianPhone: "0815-9988-1122", status: "Aktif" },
+  { id: 104, name: "Dina Mariana", nis: "210104", class: "XII IPS 1", gender: "Perempuan", address: "Jl. Anggrek No. 8", birthDate: "05 November 2007", religion: "Islam", guardianName: "Bpk. Bambang", guardianPhone: "0821-4433-2211", status: "Aktif" },
+  { id: 105, name: "Eko Prasetyo", nis: "210105", class: "XI IPA 1", gender: "Laki-laki", address: "Jl. Pahlawan No. 2", birthDate: "18 Juli 2008", religion: "Islam", guardianName: "Ibu Kartini", guardianPhone: "0856-7788-9900", status: "Aktif" },
+  { id: 106, name: "Fajar Hidayat", nis: "210106", class: "XI IPA 2", gender: "Laki-laki", address: "Jl. Pemuda No. 15", birthDate: "22 April 2008", religion: "Islam", guardianName: "Bpk. Hidayat", guardianPhone: "0812-1111-2222", status: "Aktif" },
+  { id: 107, name: "Gita Gutawa", nis: "210107", class: "XI IPS 1", gender: "Perempuan", address: "Jl. Cendrawasih No. 4", birthDate: "11 Agustus 2008", religion: "Katolik", guardianName: "Bpk. Erwin", guardianPhone: "0813-3333-4444", status: "Aktif" },
+  { id: 108, name: "Hendra Wijaya", nis: "210108", class: "X IPA 1", gender: "Laki-laki", address: "Jl. Gajah Mada No. 9", birthDate: "30 Desember 2009", religion: "Budha", guardianName: "Bpk. Wijaya", guardianPhone: "0817-5555-6666", status: "Aktif" },
+  { id: 109, name: "Indah Permata", nis: "210109", class: "X IPA 2", gender: "Perempuan", address: "Jl. Hayam Wuruk No. 21", birthDate: "04 Februari 2009", religion: "Islam", guardianName: "Ibu Syamsiah", guardianPhone: "0818-7777-8888", status: "Aktif" },
+  { id: 110, name: "Joko Widodo", nis: "210110", class: "X IPS 1", gender: "Laki-laki", address: "Jl. Veteran No. 33", birthDate: "21 Juni 2009", religion: "Islam", guardianName: "Bpk. Notomihardjo", guardianPhone: "0819-9999-0000", status: "Aktif" }
 ];
 
 // Dynamic Classes List
 let rombelList = ["X IPA 1", "X IPA 2", "X IPS 1", "XI IPA 1", "XI IPA 2", "XI IPS 1", "XII IPA 1", "XII IPA 2", "XII IPS 1"];
+
+// Dynamic School Profile State (CRUD Identitas Sekolah)
+let schoolProfile = {
+  name: "SMK AK Nusa Bangsa",
+  npsn: "20103456",
+  address: "Jl. KH. Sholeh Iskandar No. 1, Bogor",
+  phone: "(0251) 8345678",
+  email: "info@smk-aknusalab.sch.id",
+  academicYear: "2025/2026",
+  semester: "Semester Genap",
+  principalName: "Drs. H. Ahmad Fauzi, M.Pd.",
+  principalNip: "19720815 199803 1 004"
+};
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   setThemeMode(theme);
   updateRoleButtonsUI();
+
+  const savedPanel = localStorage.getItem('panel-collapsed');
+  if (savedPanel === 'true') {
+    togglePresentationPanel(true);
+  }
+
   navTo('s01');
   updateClock();
   setInterval(updateClock, 60000);
   enableMouseDragScroll();
 });
 
-// Enable Mouse Drag-to-Scroll for Chip Rows (Desktop UX)
+// Enable Mouse Drag-to-Scroll & Mouse Wheel Scroll for Horizontal Containers (Desktop UX)
 function enableMouseDragScroll() {
-  document.querySelectorAll('.chip-filter-row').forEach(slider => {
+  const scrollContainers = document.querySelectorAll('.chip-filter-row, .screen-tabs-container');
+  
+  scrollContainers.forEach(slider => {
     let isDown = false;
     let startX;
     let scrollLeft;
 
+    // Mouse wheel horizontal scrolling
+    slider.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        slider.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    // Drag-to-scroll
     slider.addEventListener('mousedown', (e) => {
       isDown = true;
       startX = e.pageX - slider.offsetLeft;
@@ -151,6 +188,7 @@ function highlightTab(code) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     if (btn.getAttribute('data-screen') === code) {
       btn.classList.add('active');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     } else {
       btn.classList.remove('active');
     }
@@ -300,6 +338,76 @@ function togglePasswordVisibility(inputId) {
 }
 
 // Advanced Search & Filter Logic
+function openFilterBottomSheet(role = 'admin') {
+  activeFilterTargetRole = role;
+  const isClient = role === 'client';
+
+  const currentClass = isClient ? clientFilterClass : adminFilterClass;
+  const currentGender = isClient ? clientFilterGender : adminFilterGender;
+  const currentStatus = isClient ? clientFilterStatus : adminFilterStatus;
+
+  const selectClass = document.getElementById('filterSelectClass');
+  if (selectClass) {
+    const allClasses = [...new Set([...rombelList, ...studentsData.map(s => s.class)])].sort();
+    selectClass.innerHTML = `<option value="all">-- Semua Rombel (Semua Kelas) --</option>` +
+      allClasses.map(c => `<option value="${c}" ${c === currentClass ? 'selected' : ''}>Kelas ${c}</option>`).join('');
+  }
+
+  const selectGender = document.getElementById('filterSelectGender');
+  if (selectGender) selectGender.value = currentGender;
+
+  const selectStatus = document.getElementById('filterSelectStatus');
+  if (selectStatus) selectStatus.value = currentStatus;
+
+  openModal('filterBottomSheetModal');
+}
+
+function applyBottomSheetFilters() {
+  const isClient = activeFilterTargetRole === 'client';
+  const selClass = document.getElementById('filterSelectClass').value;
+  const selGender = document.getElementById('filterSelectGender').value;
+  const selStatus = document.getElementById('filterSelectStatus').value;
+
+  if (isClient) {
+    clientFilterClass = selClass;
+    clientFilterGender = selGender;
+    clientFilterStatus = selStatus;
+  } else {
+    adminFilterClass = selClass;
+    adminFilterGender = selGender;
+    adminFilterStatus = selStatus;
+  }
+
+  closeModal('filterBottomSheetModal');
+  renderAppContent();
+  showToast("Filter berhasil diterapkan!");
+}
+
+function resetBottomSheetFilters() {
+  const selectClass = document.getElementById('filterSelectClass');
+  const selectGender = document.getElementById('filterSelectGender');
+  const selectStatus = document.getElementById('filterSelectStatus');
+  if (selectClass) selectClass.value = 'all';
+  if (selectGender) selectGender.value = 'all';
+  if (selectStatus) selectStatus.value = 'all';
+
+  applyBottomSheetFilters();
+}
+
+function resetBottomSheetFiltersFor(role) {
+  if (role === 'client') {
+    clientFilterClass = 'all';
+    clientFilterGender = 'all';
+    clientFilterStatus = 'all';
+  } else {
+    adminFilterClass = 'all';
+    adminFilterGender = 'all';
+    adminFilterStatus = 'all';
+  }
+  renderAppContent();
+  showToast("Filter di-reset!");
+}
+
 function handleClientFilter() {
   const input = document.getElementById('clientSearchInput');
   const clearBtn = document.getElementById('clientClearSearchBtn');
@@ -320,15 +428,6 @@ function clearClientSearch() {
   renderAppContent();
 }
 
-function selectClientFilterChip(btn, className) {
-  if (btn.parentElement) {
-    btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  }
-  btn.classList.add('active');
-  clientFilterClass = className;
-  renderAppContent();
-}
-
 function handleAdminFilter() {
   const input = document.getElementById('adminSearchInput');
   const clearBtn = document.getElementById('adminClearSearchBtn');
@@ -346,15 +445,6 @@ function clearAdminSearch() {
   if (input) input.value = '';
   if (clearBtn) clearBtn.classList.remove('active');
   adminSearchQuery = '';
-  renderAppContent();
-}
-
-function selectAdminFilterChip(btn, className) {
-  if (btn.parentElement) {
-    btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  }
-  btn.classList.add('active');
-  adminFilterClass = className;
   renderAppContent();
 }
 
@@ -392,6 +482,12 @@ function renderAppContent() {
   refreshLucideIcons();
 }
 
+function selectClientFilterClassDirect(className) {
+  clientFilterClass = className;
+  navTo('s03');
+  showToast(`Menampilkan siswa kelas ${className}`);
+}
+
 // S02 — Client Home / Recap
 function renderS02() {
   const container = document.getElementById('clientHomeScrollContainer');
@@ -403,30 +499,46 @@ function renderS02() {
   }
 
   const totalSiswa = studentsData.length;
-  const rombelSet = [...new Set(studentsData.map(s => s.class))];
+  const rombelSet = [...new Set(studentsData.map(s => s.class))].sort();
   const totalRombel = rombelSet.length;
 
   container.innerHTML = `
-    <div class="card-base" style="background: var(--color-primary); color: white; border: none;">
-      <div class="text-caption" style="opacity: 0.85;">Total Siswa</div>
-      <div class="text-display" style="margin-top: 4px; color: white;">${totalSiswa} Siswa</div>
-      <div class="text-caption" style="margin-top: 8px; opacity: 0.9;">Terbagi dalam ${totalRombel} kelas</div>
+    <!-- Top Summary Hero Card -->
+    <div class="card-base" style="padding:16px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="text-caption text-muted" style="font-weight:500;">Ringkasan Total Siswa</span>
+          <div class="text-display" style="color:var(--color-primary); font-size:26px; font-weight:700; margin-top:2px;">${totalSiswa} Siswa</div>
+          <div style="margin-top:6px; display:flex; gap:6px;">
+            <span class="badge badge-primary" style="font-size:10px;">${totalRombel} Rombel Aktif</span>
+            <span class="badge badge-secondary" style="font-size:10px;">${schoolProfile.name}</span>
+          </div>
+        </div>
+        <div style="width:48px; height:48px; border-radius:12px; background:var(--color-primary-light); color:var(--color-primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i data-lucide="graduation-cap" class="icon-lg"></i>
+        </div>
+      </div>
     </div>
 
-    <div>
-      <h3 class="text-section" style="margin-bottom: 12px;">Daftar Kelas</h3>
+    <!-- Rombel List Section -->
+    <div style="margin-top:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 class="text-section">Daftar Kelas (Rombel)</h3>
+        <span class="text-caption text-muted">${totalRombel} Kelas</span>
+      </div>
       <div style="display: flex; flex-direction: column; gap: 8px;">
         ${rombelSet.map(c => {
           const count = studentsData.filter(s => s.class === c).length;
           return `
-            <div class="student-item">
-              <div class="student-avatar" style="background:var(--color-primary-light); color:var(--color-primary);">
+            <div class="student-item" onclick="selectClientFilterClassDirect('${c}')" style="cursor:pointer; padding:12px;" title="Klik untuk lihat data kelas ${c}">
+              <div class="student-avatar" style="background:var(--color-primary-light); color:var(--color-primary); width:40px; height:40px; border-radius:10px;">
                 <i data-lucide="book-open" class="icon-sm"></i>
               </div>
               <div class="student-details">
                 <div class="student-name">Kelas ${c}</div>
                 <div class="student-subinfo">${count} Siswa Terdaftar</div>
               </div>
+              <i data-lucide="chevron-right" class="icon-sm" style="color:var(--color-text-muted);"></i>
             </div>
           `;
         }).join('')}
@@ -438,18 +550,46 @@ function renderS02() {
 // S03 — Client Student List
 function renderS03() {
   const container = document.getElementById('clientStudentListContainer');
-  const chipContainer = document.getElementById('clientFilterChipsContainer');
-  if (!container || !chipContainer) return;
+  const summaryBox = document.getElementById('clientActiveFilterSummary');
+  const badgeEl = document.getElementById('badgeFilterCountClient');
+  if (!container) return;
 
-  if (currentScreenState === 'loaded') {
-    const allClasses = [...new Set([...rombelList, ...studentsData.map(s => s.class)])].sort();
-    chipContainer.innerHTML = `
-      <button type="button" class="chip ${clientFilterClass === 'all' ? 'active' : ''}" onclick="selectClientFilterChip(this, 'all')">Semua (${studentsData.length})</button>
-      ${allClasses.map(c => {
-        const count = studentsData.filter(s => s.class === c).length;
-        return `<button type="button" class="chip ${clientFilterClass === c ? 'active' : ''}" onclick="selectClientFilterChip(this, '${c}')">${c} (${count})</button>`;
-      }).join('')}
-    `;
+  // Active filter count
+  let activeCount = 0;
+  if (clientFilterClass !== 'all') activeCount++;
+  if (clientFilterGender !== 'all') activeCount++;
+  if (clientFilterStatus !== 'all') activeCount++;
+
+  if (badgeEl) {
+    if (activeCount > 0) {
+      badgeEl.innerText = activeCount;
+      badgeEl.style.display = 'inline-block';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+
+  if (summaryBox) {
+    if (activeCount > 0) {
+      const pills = [
+        clientFilterClass !== 'all' ? `Kelas ${clientFilterClass}` : null,
+        clientFilterGender !== 'all' ? clientFilterGender : null,
+        clientFilterStatus !== 'all' ? `Status ${clientFilterStatus}` : null
+      ].filter(Boolean);
+
+      summaryBox.style.display = 'block';
+      summaryBox.innerHTML = `
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:11px; padding:6px 10px; background:var(--color-surface-subtle); border-radius:var(--radius-sm); border:1px solid var(--color-border);">
+          <span style="color:var(--color-text-muted); font-weight:500;">Filter:</span>
+          ${pills.map(p => `<span class="badge badge-primary" style="font-size:10px;">${p}</span>`).join('')}
+          <button type="button" class="btn btn-secondary btn-sm" onclick="resetBottomSheetFiltersFor('client')" style="padding:1px 6px; font-size:10px; margin-left:auto; height:auto; min-height:0;">
+            <i data-lucide="x" class="icon-sm"></i> Reset
+          </button>
+        </div>
+      `;
+    } else {
+      summaryBox.style.display = 'none';
+    }
   }
 
   if (currentScreenState !== 'loaded') {
@@ -460,7 +600,9 @@ function renderS03() {
   const clientFiltered = studentsData.filter(s => {
     const matchSearch = s.name.toLowerCase().includes(clientSearchQuery) || s.nis.includes(clientSearchQuery);
     const matchClass = clientFilterClass === 'all' || s.class === clientFilterClass;
-    return matchSearch && matchClass;
+    const matchGender = clientFilterGender === 'all' || s.gender === clientFilterGender;
+    const matchStatus = clientFilterStatus === 'all' || (s.status || 'Aktif') === clientFilterStatus;
+    return matchSearch && matchClass && matchGender && matchStatus;
   });
 
   if (clientFiltered.length === 0) {
@@ -468,25 +610,36 @@ function renderS03() {
       <div class="state-container">
         <div class="state-icon-box"><i data-lucide="search-x" class="icon-lg"></i></div>
         <div class="state-title">Siswa Tidak Ditemukan</div>
-        <div class="state-desc">Coba cek kembali kata kunci atau filter kelas kamu.</div>
+        <div class="state-desc">Coba atur ulang filter atau kata kunci kamu.</div>
       </div>`;
   } else {
     container.innerHTML = `
-      <div class="text-caption text-muted" style="margin-bottom: 8px;">Menampilkan ${clientFiltered.length} dari ${studentsData.length} siswa</div>
+      <div class="text-caption text-muted" style="margin-bottom: 8px;">Menampilkan <strong>${clientFiltered.length}</strong> dari ${studentsData.length} siswa</div>
       <div style="display:flex; flex-direction:column; gap:8px;">` + 
       clientFiltered.map(s => `
-        <div class="student-item">
-          <div class="student-avatar">${s.name.charAt(0)}</div>
-          <div class="student-details">
-            <div class="student-name">${s.name}</div>
-            <div class="student-subinfo">NIS: ${s.nis} • <span class="badge badge-secondary">${s.class}</span></div>
+        <div class="student-item" onclick="openDetailModal(${s.id})" style="cursor:pointer; padding:12px; display:flex; align-items:center; gap:12px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);" title="Klik untuk lihat detail">
+          <div class="student-avatar" style="width:40px; height:40px; font-size:15px; border-radius:10px; flex-shrink:0;">${s.name.charAt(0)}</div>
+          
+          <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:4px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+              <div class="student-name" style="font-size:14px; font-weight:600; color:var(--color-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.name}</div>
+              <span class="badge badge-secondary" style="font-size:10px; flex-shrink:0;">${s.class}</span>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--color-text-muted);">
+              <span>NIS: <strong>${s.nis}</strong></span>
+              <span>•</span>
+              <span>${s.gender}</span>
+            </div>
           </div>
+
+          <i data-lucide="chevron-right" class="icon-sm" style="color:var(--color-text-muted); flex-shrink:0;"></i>
         </div>
       `).join('') + `</div>`;
   }
 }
 
-// S04 — Admin Dashboard
+// S04 — Admin Dashboard (Clean Executive Analytics & Vector Icon Consistency)
 function renderS04() {
   const container = document.getElementById('adminDashboardScrollContainer');
   if (!container) return;
@@ -496,31 +649,113 @@ function renderS04() {
     return;
   }
 
+  const totalSiswa = studentsData.length;
+  const rombelSet = [...new Set(studentsData.map(s => s.class))];
+  const totalRombel = rombelSet.length;
+  const countL = studentsData.filter(s => s.gender === 'Laki-laki').length;
+  const countP = studentsData.filter(s => s.gender === 'Perempuan').length;
+  const countAktif = studentsData.filter(s => (s.status || 'Aktif') === 'Aktif').length;
+  const percentL = totalSiswa ? Math.round((countL / totalSiswa) * 100) : 50;
+  const percentP = totalSiswa ? (100 - percentL) : 50;
+
   container.innerHTML = `
-    <div class="card-base">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+    <!-- Top Greeting & Academic Year Banner -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h3 style="font-size:15px; font-weight:700; color:var(--color-text);">Halo, Administrator</h3>
+        <p class="text-caption text-muted" style="font-size:11px;">T.A. ${schoolProfile.academicYear} • ${schoolProfile.semester}</p>
+      </div>
+      <span class="badge badge-primary" style="font-size:10px;">${schoolProfile.name}</span>
+    </div>
+
+    <!-- Hero Main KPI Card -->
+    <div class="card-base" style="padding:18px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <div>
-          <div class="text-caption text-muted">Total Siswa Terdaftar</div>
-          <div class="text-heading" style="margin-top: 2px;">${studentsData.length} Siswa</div>
+          <span class="text-caption text-muted" style="font-weight:500;">Total Siswa Terdaftar</span>
+          <div style="color:var(--color-text); font-size:32px; font-weight:700; line-height:1.1; margin-top:4px;">${totalSiswa} <span style="font-size:15px; font-weight:500; color:var(--color-text-muted);">Siswa</span></div>
         </div>
-        <button type="button" class="btn btn-primary btn-sm" onclick="navTo('s05'); openAddModal();">
-          <i data-lucide="plus" class="icon-sm"></i> Tambah Siswa
-        </button>
+        <div style="width:44px; height:44px; border-radius:12px; background:var(--color-primary-light); color:var(--color-primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i data-lucide="users" class="icon-lg"></i>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:6px;">
+        <span class="badge badge-primary" style="font-size:10px;">${totalRombel} Rombel</span>
+        <span class="badge badge-success" style="font-size:10px;">${countAktif} Siswa Aktif (${totalSiswa ? Math.round((countAktif/totalSiswa)*100) : 100}%)</span>
       </div>
     </div>
 
-    <div>
-      <h3 class="text-section" style="margin-bottom: 12px;">Siswa Baru Ditambahkan</h3>
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        ${studentsData.slice(0, 3).map(s => `
-          <div class="student-item">
-            <div class="student-avatar">${s.name.charAt(0)}</div>
-            <div class="student-details">
-              <div class="student-name">${s.name}</div>
-              <div class="student-subinfo">NIS: ${s.nis} • ${s.class}</div>
-            </div>
-          </div>
-        `).join('')}
+    <!-- 2x2 Key Metric Cards Grid (Pure SVG Lucide Vector Icons) -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;">
+      <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <span class="text-caption text-muted" style="font-size:11px;">Rombel / Kelas</span>
+          <i data-lucide="book-open" class="icon-sm" style="color:var(--color-primary);"></i>
+        </div>
+        <div style="font-size:20px; font-weight:700; color:var(--color-text);">${totalRombel} <span style="font-size:11px; font-weight:400; color:var(--color-text-muted);">Kelas</span></div>
+      </div>
+
+      <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <span class="text-caption text-muted" style="font-size:11px;">Laki-laki</span>
+          <i data-lucide="user" class="icon-sm" style="color:var(--color-primary);"></i>
+        </div>
+        <div style="font-size:20px; font-weight:700; color:var(--color-text);">${countL} <span style="font-size:11px; font-weight:400; color:var(--color-text-muted);">Siswa</span></div>
+      </div>
+
+      <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <span class="text-caption text-muted" style="font-size:11px;">Perempuan</span>
+          <i data-lucide="user-check" class="icon-sm" style="color:#EC4899;"></i>
+        </div>
+        <div style="font-size:20px; font-weight:700; color:var(--color-text);">${countP} <span style="font-size:11px; font-weight:400; color:var(--color-text-muted);">Siswa</span></div>
+      </div>
+
+      <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border); cursor:pointer;" onclick="openPrintModal('admin');">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <span class="text-caption text-muted" style="font-size:11px;">Cetak Laporan</span>
+          <i data-lucide="printer" class="icon-sm" style="color:var(--color-primary);"></i>
+        </div>
+        <div style="font-size:13px; font-weight:600; color:var(--color-primary); display:flex; align-items:center; gap:2px;">Pratinjau <i data-lucide="chevron-right" class="icon-sm"></i></div>
+      </div>
+    </div>
+
+    <!-- Gender Distribution Bar Card (Vector Icon Labels) -->
+    <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md); margin-top:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:12px; font-weight:600; color:var(--color-text);">Rasio Gender Siswa</span>
+        <span class="text-caption text-muted" style="font-size:11px; display:flex; align-items:center; gap:8px;">
+          <span style="display:flex; align-items:center; gap:3px;"><i data-lucide="user" style="width:12px; height:12px; color:var(--color-primary);"></i> ${percentL}%</span>
+          <span>•</span>
+          <span style="display:flex; align-items:center; gap:3px;"><i data-lucide="user-check" style="width:12px; height:12px; color:#EC4899;"></i> ${percentP}%</span>
+        </span>
+      </div>
+      
+      <!-- Visual Ratio Progress Bar -->
+      <div style="height:8px; border-radius:4px; background:var(--color-surface-subtle); display:flex; overflow:hidden;">
+        <div style="width:${percentL}%; background:var(--color-primary); transition:width 0.3s ease;" title="Laki-laki ${percentL}%"></div>
+        <div style="width:${percentP}%; background:#EC4899; transition:width 0.3s ease;" title="Perempuan ${percentP}%"></div>
+      </div>
+    </div>
+
+    <!-- Primary Dashboard Action -->
+    <div style="margin-top:4px;">
+      <button type="button" class="btn btn-primary btn-full" style="padding:12px; font-weight:600; justify-content:center; gap:8px;" onclick="navTo('s05'); openAddModal();">
+        <i data-lucide="user-plus" class="icon-sm"></i> Tambah Siswa Baru
+      </button>
+    </div>
+
+    <!-- Bottom Status Card -->
+    <div class="card-base" style="padding:12px 14px; background:var(--color-surface-subtle); border:1px solid var(--color-border); margin-top:4px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:34px; height:34px; border-radius:10px; background:var(--color-success-bg); color:var(--color-success); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <i data-lucide="shield-check" class="icon-sm"></i>
+        </div>
+        <div>
+          <div style="font-size:12px; font-weight:600; color:var(--color-text);">Sistem Manajemen Aktif</div>
+          <div class="text-caption text-muted" style="font-size:11px;">Semua data terverifikasi & tersinkronisasi</div>
+        </div>
       </div>
     </div>
   `;
@@ -529,18 +764,46 @@ function renderS04() {
 // S05 — Admin Student Management (Primary CRUD)
 function renderS05() {
   const container = document.getElementById('adminStudentListContainer');
-  const chipContainer = document.getElementById('adminFilterChipsContainer');
-  if (!container || !chipContainer) return;
+  const summaryBox = document.getElementById('adminActiveFilterSummary');
+  const badgeEl = document.getElementById('badgeFilterCountAdmin');
+  if (!container) return;
 
-  if (currentScreenState === 'loaded') {
-    const allClasses = [...new Set([...rombelList, ...studentsData.map(s => s.class)])].sort();
-    chipContainer.innerHTML = `
-      <button type="button" class="chip ${adminFilterClass === 'all' ? 'active' : ''}" onclick="selectAdminFilterChip(this, 'all')">Semua (${studentsData.length})</button>
-      ${allClasses.map(c => {
-        const count = studentsData.filter(s => s.class === c).length;
-        return `<button type="button" class="chip ${adminFilterClass === c ? 'active' : ''}" onclick="selectAdminFilterChip(this, '${c}')">${c} (${count})</button>`;
-      }).join('')}
-    `;
+  // Active filter count
+  let activeCount = 0;
+  if (adminFilterClass !== 'all') activeCount++;
+  if (adminFilterGender !== 'all') activeCount++;
+  if (adminFilterStatus !== 'all') activeCount++;
+
+  if (badgeEl) {
+    if (activeCount > 0) {
+      badgeEl.innerText = activeCount;
+      badgeEl.style.display = 'inline-block';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+
+  if (summaryBox) {
+    if (activeCount > 0) {
+      const pills = [
+        adminFilterClass !== 'all' ? `Kelas ${adminFilterClass}` : null,
+        adminFilterGender !== 'all' ? adminFilterGender : null,
+        adminFilterStatus !== 'all' ? `Status ${adminFilterStatus}` : null
+      ].filter(Boolean);
+
+      summaryBox.style.display = 'block';
+      summaryBox.innerHTML = `
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:11px; padding:6px 10px; background:var(--color-surface-subtle); border-radius:var(--radius-sm); border:1px solid var(--color-border);">
+          <span style="color:var(--color-text-muted); font-weight:500;">Filter:</span>
+          ${pills.map(p => `<span class="badge badge-primary" style="font-size:10px;">${p}</span>`).join('')}
+          <button type="button" class="btn btn-secondary btn-sm" onclick="resetBottomSheetFiltersFor('admin')" style="padding:1px 6px; font-size:10px; margin-left:auto; height:auto; min-height:0;">
+            <i data-lucide="x" class="icon-sm"></i> Reset
+          </button>
+        </div>
+      `;
+    } else {
+      summaryBox.style.display = 'none';
+    }
   }
 
   if (currentScreenState !== 'loaded') {
@@ -551,7 +814,9 @@ function renderS05() {
   const adminFiltered = studentsData.filter(s => {
     const matchSearch = s.name.toLowerCase().includes(adminSearchQuery) || s.nis.includes(adminSearchQuery);
     const matchClass = adminFilterClass === 'all' || s.class === adminFilterClass;
-    return matchSearch && matchClass;
+    const matchGender = adminFilterGender === 'all' || s.gender === adminFilterGender;
+    const matchStatus = adminFilterStatus === 'all' || (s.status || 'Aktif') === adminFilterStatus;
+    return matchSearch && matchClass && matchGender && matchStatus;
   });
 
   if (adminFiltered.length === 0) {
@@ -559,22 +824,32 @@ function renderS05() {
       <div class="state-container">
         <div class="state-icon-box"><i data-lucide="search-x" class="icon-lg"></i></div>
         <div class="state-title">Data Tidak Ditemukan</div>
-        <div class="state-desc">Coba cek kata kunci atau hapus filter kelas.</div>
+        <div class="state-desc">Coba atur ulang filter atau kata kunci kamu.</div>
       </div>`;
   } else {
     container.innerHTML = `
-      <div class="text-caption text-muted" style="margin-bottom: 8px;">Menampilkan ${adminFiltered.length} dari ${studentsData.length} siswa</div>
+      <div class="text-caption text-muted" style="margin-bottom: 8px;">Menampilkan <strong>${adminFiltered.length}</strong> dari ${studentsData.length} siswa</div>
       <div style="display:flex; flex-direction:column; gap:8px;">` + 
       adminFiltered.map(s => `
-        <div class="student-item">
-          <div class="student-avatar">${s.name.charAt(0)}</div>
-          <div class="student-details">
-            <div class="student-name">${s.name}</div>
-            <div class="student-subinfo">NIS: ${s.nis} • <span class="badge badge-secondary">${s.class}</span></div>
+        <div class="student-item" onclick="openDetailModal(${s.id})" style="cursor:pointer; padding:12px; display:flex; align-items:center; gap:12px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md);" title="Klik untuk lihat detail">
+          <div class="student-avatar" style="width:40px; height:40px; font-size:15px; border-radius:10px; flex-shrink:0;">${s.name.charAt(0)}</div>
+          
+          <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:4px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+              <div class="student-name" style="font-size:14px; font-weight:600; color:var(--color-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.name}</div>
+              <span class="badge badge-secondary" style="font-size:10px; flex-shrink:0;">${s.class}</span>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--color-text-muted);">
+              <span>NIS: <strong>${s.nis}</strong></span>
+              <span>•</span>
+              <span>${s.gender}</span>
+            </div>
           </div>
-          <div class="student-actions">
-            <button type="button" class="btn-action-icon" onclick="openEditModal(${s.id})" aria-label="Edit Siswa"><i data-lucide="edit-2"></i></button>
-            <button type="button" class="btn-action-icon btn-action-delete" onclick="openDeleteDialog('${s.name.replace(/'/g, "\\'")}', '${s.nis.replace(/'/g, "\\'")}', ${s.id})" aria-label="Hapus Siswa"><i data-lucide="trash-2"></i></button>
+
+          <div class="student-actions" onclick="event.stopPropagation()" style="display:flex; gap:4px; flex-shrink:0;">
+            <button type="button" class="btn-action-icon" onclick="openEditModal(${s.id})" aria-label="Edit Siswa" title="Edit Data"><i data-lucide="edit-2"></i></button>
+            <button type="button" class="btn-action-icon btn-action-delete" onclick="openDeleteDialog('${s.name.replace(/'/g, "\\'")}', '${s.nis.replace(/'/g, "\\'")}', ${s.id})" aria-label="Hapus Siswa" title="Hapus Data"><i data-lucide="trash-2"></i></button>
           </div>
         </div>
       `).join('') + `</div>`;
@@ -612,15 +887,17 @@ function openAddModal() {
   document.getElementById('inputNIS').value = "";
   document.getElementById('selectClass').selectedIndex = 0;
   document.getElementById('genderL').checked = true;
-  document.getElementById('inputAddress').value = "";
+  
+  // Additional student fields matching S12 detail
+  if (document.getElementById('inputBirthDate')) document.getElementById('inputBirthDate').value = "";
+  if (document.getElementById('selectReligion')) document.getElementById('selectReligion').value = "Islam";
+  if (document.getElementById('inputGuardianName')) document.getElementById('inputGuardianName').value = "";
+  if (document.getElementById('inputGuardianPhone')) document.getElementById('inputGuardianPhone').value = "";
+  if (document.getElementById('selectStatus')) document.getElementById('selectStatus').value = "Aktif";
+  if (document.getElementById('inputAddress')) document.getElementById('inputAddress').value = "";
 
   clearValidationErrors();
-
-  document.getElementById('modalOverlay').classList.add('active');
-  document.getElementById('studentFormModal').classList.add('active');
-  document.getElementById('deleteConfirmDialog').classList.remove('active');
-  document.getElementById('rombelFormModal').classList.remove('active');
-  refreshLucideIcons();
+  openModal('studentFormModal');
 }
 
 function openEditModal(studentId) {
@@ -642,15 +919,16 @@ function openEditModal(studentId) {
     document.getElementById('genderL').checked = true;
   }
 
-  document.getElementById('inputAddress').value = student.address || "";
+  // Populate all additional fields
+  if (document.getElementById('inputBirthDate')) document.getElementById('inputBirthDate').value = student.birthDate || "";
+  if (document.getElementById('selectReligion')) document.getElementById('selectReligion').value = student.religion || "Islam";
+  if (document.getElementById('inputGuardianName')) document.getElementById('inputGuardianName').value = student.guardianName || "";
+  if (document.getElementById('inputGuardianPhone')) document.getElementById('inputGuardianPhone').value = student.guardianPhone || "";
+  if (document.getElementById('selectStatus')) document.getElementById('selectStatus').value = student.status || "Aktif";
+  if (document.getElementById('inputAddress')) document.getElementById('inputAddress').value = student.address || "";
 
   clearValidationErrors();
-
-  document.getElementById('modalOverlay').classList.add('active');
-  document.getElementById('studentFormModal').classList.add('active');
-  document.getElementById('deleteConfirmDialog').classList.remove('active');
-  document.getElementById('rombelFormModal').classList.remove('active');
-  refreshLucideIcons();
+  openModal('studentFormModal');
 }
 
 function handleFormSubmit(e) {
@@ -664,6 +942,12 @@ function handleFormSubmit(e) {
   const className = document.getElementById('selectClass').value;
   const genderRadio = document.querySelector('input[name="gender"]:checked');
   const gender = genderRadio ? genderRadio.value : 'Laki-laki';
+
+  const birthDate = (document.getElementById('inputBirthDate') && document.getElementById('inputBirthDate').value.trim()) || "15 Mei 2007";
+  const religion = (document.getElementById('selectReligion') && document.getElementById('selectReligion').value) || "Islam";
+  const guardianName = (document.getElementById('inputGuardianName') && document.getElementById('inputGuardianName').value.trim()) || "Bpk. Subagyo";
+  const guardianPhone = (document.getElementById('inputGuardianPhone') && document.getElementById('inputGuardianPhone').value.trim()) || "0812-3456-7890";
+  const status = (document.getElementById('selectStatus') && document.getElementById('selectStatus').value) || "Aktif";
   const address = document.getElementById('inputAddress').value.trim();
 
   let hasError = false;
@@ -678,15 +962,28 @@ function handleFormSubmit(e) {
 
   setTimeout(() => {
     setLoadingState('btnSaveStudent', false);
+    const studentObj = {
+      id: id ? parseInt(id) : Date.now(),
+      name,
+      nis,
+      class: className,
+      gender,
+      birthDate,
+      religion,
+      guardianName,
+      guardianPhone,
+      status,
+      address
+    };
+
     if (id) {
       const index = studentsData.findIndex(s => s.id == id);
       if (index !== -1) {
-        studentsData[index] = { id: parseInt(id), name, nis, class: className, gender, address };
+        studentsData[index] = studentObj;
         showToast("Data siswa berhasil diperbarui");
       }
     } else {
-      const newId = Date.now();
-      studentsData.unshift({ id: newId, name, nis, class: className, gender, address });
+      studentsData.unshift(studentObj);
       showToast("Siswa baru berhasil ditambahkan");
     }
 
@@ -725,23 +1022,36 @@ function executeDelete() {
   }, 500);
 }
 
+function openModal(modalId) {
+  const overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.classList.add('active');
+
+  // Close all active cards first
+  document.querySelectorAll('.modal-card, .dialog-card').forEach(card => card.classList.remove('active'));
+
+  const target = document.getElementById(modalId);
+  if (target) target.classList.add('active');
+
+  refreshLucideIcons();
+}
+
 function closeModal(modalId) {
   const el = document.getElementById(modalId);
   if (el) el.classList.remove('active');
   
-  const formModal = document.getElementById('studentFormModal');
-  const dialogModal = document.getElementById('deleteConfirmDialog');
-  const rombelModal = document.getElementById('rombelFormModal');
-  
-  const formActive = formModal && formModal.classList.contains('active');
-  const dialogActive = dialogModal && dialogModal.classList.contains('active');
-  const rombelActive = rombelModal && rombelModal.classList.contains('active');
-
-  if (!formActive && !dialogActive && !rombelActive) {
+  const activeCard = document.querySelector('.modal-card.active, .dialog-card.active');
+  if (!activeCard) {
     const overlay = document.getElementById('modalOverlay');
     if (overlay) overlay.classList.remove('active');
     highlightTab(activeScreen);
   }
+}
+
+function closeAllModals() {
+  document.querySelectorAll('.modal-card, .dialog-card').forEach(card => card.classList.remove('active'));
+  const overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.classList.remove('active');
+  highlightTab(activeScreen);
 }
 
 // Rombel (Kelas) CRUD Logic
@@ -900,6 +1210,83 @@ function updateProfileView() {
   }
 
   renderRombelManager();
+  renderSchoolProfileCard();
+}
+
+function renderSchoolProfileCard() {
+  const container = document.getElementById('schoolProfileDisplayCard');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+      <div>
+        <h4 style="font-size:15px; font-weight:700; color:var(--color-text); margin:0;">${schoolProfile.name}</h4>
+        <p style="font-size:11px; color:var(--color-text-muted); margin-top:2px;">NPSN: <strong>${schoolProfile.npsn}</strong></p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+        <span class="badge badge-primary" style="font-size:10px;">Terverifikasi</span>
+        <span class="badge badge-secondary" style="font-size:10px;">T.A. ${schoolProfile.academicYear} (${schoolProfile.semester})</span>
+      </div>
+    </div>
+
+    <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:12px; border-top:1px solid var(--color-border); padding-top:8px;">
+      <div style="display:flex; align-items:center; gap:6px; color:var(--color-text);">
+        <i data-lucide="map-pin" class="icon-sm" style="color:var(--color-primary);"></i>
+        <span>${schoolProfile.address}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; color:var(--color-text);">
+        <i data-lucide="phone" class="icon-sm" style="color:var(--color-primary);"></i>
+        <span>${schoolProfile.phone} • ${schoolProfile.email}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; color:var(--color-text); margin-top:2px;">
+        <i data-lucide="user-check" class="icon-sm" style="color:var(--color-primary);"></i>
+        <span>Kepala Sekolah: <strong>${schoolProfile.principalName}</strong> (NIP. ${schoolProfile.principalNip})</span>
+      </div>
+    </div>
+  `;
+  refreshLucideIcons();
+}
+
+function openSchoolProfileModal() {
+  if (!checkStatePermission()) return;
+
+  document.getElementById('inputSchoolName').value = schoolProfile.name || '';
+  document.getElementById('inputSchoolAddress').value = schoolProfile.address || '';
+  document.getElementById('inputSchoolPhone').value = schoolProfile.phone || '';
+  document.getElementById('inputSchoolEmail').value = schoolProfile.email || '';
+  document.getElementById('inputAcademicYear').value = schoolProfile.academicYear || '2025/2026';
+  document.getElementById('inputSemester').value = schoolProfile.semester || 'Semester Genap';
+  document.getElementById('inputPrincipalName').value = schoolProfile.principalName || '';
+  document.getElementById('inputPrincipalNIP').value = schoolProfile.principalNip || '';
+
+  openModal('schoolProfileModal');
+  highlightTab('s14');
+}
+
+function handleSchoolProfileSubmit(e) {
+  e.preventDefault();
+  if (!checkStatePermission()) return;
+
+  const name = document.getElementById('inputSchoolName').value.trim();
+  if (!name) {
+    showToast("Nama sekolah wajib diisi", "error");
+    return;
+  }
+
+  schoolProfile.name = name;
+  schoolProfile.address = document.getElementById('inputSchoolAddress').value.trim() || schoolProfile.address;
+  schoolProfile.phone = document.getElementById('inputSchoolPhone').value.trim() || schoolProfile.phone;
+  schoolProfile.email = document.getElementById('inputSchoolEmail').value.trim() || schoolProfile.email;
+  schoolProfile.academicYear = document.getElementById('inputAcademicYear').value.trim() || schoolProfile.academicYear;
+  schoolProfile.semester = document.getElementById('inputSemester').value || schoolProfile.semester;
+  schoolProfile.principalName = document.getElementById('inputPrincipalName').value.trim() || schoolProfile.principalName;
+  schoolProfile.principalNip = document.getElementById('inputPrincipalNIP').value.trim() || schoolProfile.principalNip;
+
+  showToast("Identitas & Tahun Ajaran berhasil diperbarui!");
+  closeModal('schoolProfileModal');
+  renderSchoolProfileCard();
+  renderS04();
+  renderS02();
 }
 
 function updateBottomNavForS09() {
@@ -940,4 +1327,228 @@ function switchPanelTab(tabName) {
     if (handoffTab) handoffTab.classList.remove('active');
   }
   refreshLucideIcons();
+}
+
+function togglePresentationPanel(forceState = null) {
+  const panel = document.getElementById('presentationPanel');
+  const btn = document.getElementById('togglePanelBtn');
+  const label = document.getElementById('togglePanelLabel');
+  const icon = document.getElementById('togglePanelIcon');
+  if (!panel) return;
+
+  let isCollapsed;
+  if (forceState !== null) {
+    isCollapsed = forceState;
+    panel.classList.toggle('collapsed', isCollapsed);
+  } else {
+    isCollapsed = panel.classList.toggle('collapsed');
+  }
+
+  localStorage.setItem('panel-collapsed', isCollapsed ? 'true' : 'false');
+
+  if (btn) btn.classList.toggle('active', !isCollapsed);
+  if (label) label.innerText = isCollapsed ? 'Panel: Tutup' : 'Panel: Tampil';
+  if (icon) icon.setAttribute('data-lucide', isCollapsed ? 'layout-sidebar-off' : 'layout-sidebar');
+
+  if (forceState === null) {
+    showToast(isCollapsed ? "Panel Presentasi Ditutup" : "Panel Presentasi Tampil");
+  }
+  refreshLucideIcons();
+}
+
+/* ==========================================================================
+   S12: DETAIL SISWA (READ-ONLY) & PRINT PREVIEW LOGIC
+   ========================================================================== */
+function openDetailModal(studentId) {
+  const student = studentsData.find(s => s.id === studentId) || studentsData[0];
+  if (!student) return;
+
+  const content = document.getElementById('studentDetailContent');
+  if (!content) return;
+
+  content.innerHTML = `
+    <!-- Top Hero Profile Header Card -->
+    <div style="display:flex; flex-direction:column; align-items:center; text-align:center; padding:14px; background:var(--color-surface-subtle); border-radius:var(--radius-md); border:1px solid var(--color-border); margin-bottom:12px;">
+      <div class="student-avatar" style="width:64px; height:64px; font-size:24px; margin-bottom:8px; background:var(--color-primary); color:#FFFFFF; font-weight:700; border-radius:16px; box-shadow:0 4px 12px rgba(37,99,235,0.3);">
+        ${student.name.charAt(0)}
+      </div>
+      <h3 style="font-size:17px; font-weight:700; color:var(--color-text);">${student.name}</h3>
+      <div style="font-size:12px; color:var(--color-text-muted); margin-top:2px;">NIS: <strong style="color:var(--color-primary);">${student.nis}</strong></div>
+      <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; justify-content:center;">
+        <span class="badge badge-primary" style="font-size:11px; padding:3px 8px;">Kelas ${student.class}</span>
+        <span class="badge badge-secondary" style="font-size:11px; padding:3px 8px;">${student.gender}</span>
+        <span class="badge ${student.status === 'Alumni' ? 'badge-secondary' : 'badge-success'}" style="font-size:11px; padding:3px 8px;">${student.status || 'Siswa Aktif'}</span>
+      </div>
+    </div>
+
+    <!-- High-Contrast Detail Info Rows -->
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div class="detail-row">
+        <span class="detail-label"><i data-lucide="calendar" class="icon-sm"></i> Tanggal Lahir</span>
+        <span class="detail-value">${student.birthDate || '15 Mei 2007'}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label"><i data-lucide="book" class="icon-sm"></i> Agama</span>
+        <span class="detail-value">${student.religion || 'Islam'}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label"><i data-lucide="map-pin" class="icon-sm"></i> Alamat Rumah</span>
+        <span class="detail-value">${student.address || 'Jl. Sudirman No. 10'}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label"><i data-lucide="user" class="icon-sm"></i> Wali Siswa</span>
+        <span class="detail-value">${student.guardianName || 'Orang Tua / Wali'}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label"><i data-lucide="phone" class="icon-sm"></i> Kontak Wali</span>
+        <span class="detail-value">${student.guardianPhone || '0812-3456-7890'}</span>
+      </div>
+    </div>
+  `;
+
+  openModal('studentDetailModal');
+  highlightTab('s12');
+  refreshLucideIcons();
+}
+
+function openPrintModal(role = 'admin') {
+  const isClient = role === 'client';
+  const query = isClient ? clientSearchQuery : adminSearchQuery;
+  const filterClass = isClient ? clientFilterClass : adminFilterClass;
+  const filterGender = isClient ? clientFilterGender : adminFilterGender;
+
+  const filteredData = studentsData.filter(s => {
+    const matchSearch = s.name.toLowerCase().includes(query) || s.nis.includes(query);
+    const matchClass = filterClass === 'all' || s.class === filterClass;
+    const matchGender = filterGender === 'all' || s.gender === filterGender;
+    return matchSearch && matchClass && matchGender;
+  });
+
+  const classText = filterClass === 'all' ? 'Semua Kelas' : `Kelas ${filterClass}`;
+  const genderText = filterGender === 'all' ? 'Semua Gender' : filterGender;
+  const activeFilters = `${classText} • ${genderText}${query ? ` • Search: "${query}"` : ''}`;
+
+  const now = new Date();
+  const dateStr = `${now.getDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][now.getMonth()]} ${now.getFullYear()}`;
+
+  const body = document.getElementById('printPreviewBody');
+  if (!body) return;
+
+  body.innerHTML = `
+    <div id="printReportPaper" style="background:#fff; color:#0f172a; padding:16px; border-radius:6px; border:1px solid #cbd5e1; font-family:system-ui, sans-serif; box-sizing:border-box; width:100%; max-width:100%; overflow:hidden;">
+      <div style="border-bottom: 2px solid #0F172A; padding-bottom: 8px; margin-bottom: 12px; text-align: center;">
+        <h2 style="font-size: 14px; font-weight: 700; margin: 0; color: #0F172A; text-transform: uppercase; word-break:break-word;">SEKOLAHKU — ${schoolProfile.name.toUpperCase()}</h2>
+        <div style="font-size: 11px; color: #475569; margin-top:2px;">${schoolProfile.address} • Telp: ${schoolProfile.phone}</div>
+        <div style="font-size: 11px; font-weight:600; color: #0F172A; margin-top:2px;">Laporan Data Siswa • T.A. ${schoolProfile.academicYear} (${schoolProfile.semester})</div>
+        <div style="font-size: 10px; color: #64748B; margin-top: 6px; padding: 4px 8px; background: #F1F5F9; border-radius: 4px; display: block; word-break:break-word; text-align:center;">
+          Tgl Cetak: <strong>${dateStr}</strong> | Filter: <strong>${activeFilters}</strong>
+        </div>
+      </div>
+
+      <div style="width:100%; overflow-x:auto;">
+        <table style="width: 100%; min-width:340px; border-collapse: collapse; font-size: 11px; text-align: left; margin-top: 4px;">
+          <thead>
+            <tr style="background: #F1F5F9; border-bottom: 2px solid #CBD5E1;">
+              <th style="padding: 6px 8px; white-space:nowrap;">No</th>
+              <th style="padding: 6px 8px; white-space:nowrap;">NIS</th>
+              <th style="padding: 6px 8px; white-space:nowrap;">Nama Lengkap</th>
+              <th style="padding: 6px 8px; white-space:nowrap;">Kelas</th>
+              <th style="padding: 6px 8px; white-space:nowrap;">Gender</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredData.length === 0 ? `
+              <tr>
+                <td colspan="5" style="padding: 16px; text-align: center; color: #94A3B8;">Tidak ada data siswa yang sesuai dengan filter.</td>
+              </tr>
+            ` : filteredData.map((s, idx) => `
+              <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 6px 8px; white-space:nowrap;">${idx + 1}</td>
+                <td style="padding: 6px 8px; white-space:nowrap;">${s.nis}</td>
+                <td style="padding: 6px 8px; font-weight: 600; white-space:nowrap;">${s.name}</td>
+                <td style="padding: 6px 8px; white-space:nowrap;">${s.class}</td>
+                <td style="padding: 6px 8px; white-space:nowrap;">${s.gender}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 14px; font-size: 10px; color: #64748B; display: flex; justify-content: space-between; border-top: 1px solid #E2E8F0; padding-top: 8px; flex-wrap:wrap; gap:4px;">
+        <span>Total Ter-filter: <strong>${filteredData.length} Siswa</strong></span>
+        <span>Operator: <strong>${currentRole.toUpperCase()}</strong></span>
+      </div>
+
+      <!-- Dynamic Principal Signature Block -->
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; font-size: 11px; color: #0F172A;">
+        <div style="text-align: center; min-width: 180px;">
+          <div>Bogor, ${dateStr}</div>
+          <div>Mengetahui,</div>
+          <div style="font-weight: 600; margin-top:2px;">Kepala ${schoolProfile.name}</div>
+          <div style="height: 38px;"></div>
+          <div style="font-weight: 700; text-decoration: underline;">${schoolProfile.principalName}</div>
+          <div style="font-size: 10px; color: #64748B;">NIP. ${schoolProfile.principalNip}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  openModal('printPreviewModal');
+  highlightTab('s13');
+}
+
+function triggerPrint() {
+  const paperContent = document.getElementById('printReportPaper');
+  if (!paperContent) return;
+
+  // Try popup print window first for clean printable view
+  try {
+    const printWin = window.open('', '_blank', 'width=800,height=600');
+    if (printWin) {
+      printWin.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Laporan Data Siswa Terfilter - SekolahKu</title>
+          <style>
+            body { font-family: system-ui, -apple-system, sans-serif; padding: 24px; color: #0f172a; margin: 0; background: #fff; }
+            table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 12px; font-size: 12px; text-align: left; }
+            th { background-color: #f1f5f9; font-weight: 700; }
+            @media print {
+              body { padding: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          ${paperContent.innerHTML}
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+        </html>
+      `);
+      printWin.document.close();
+      closeModal('printPreviewModal');
+      showToast("Membuka dokumen cetak terfilter...");
+      return;
+    }
+  } catch (e) {
+    console.warn("Print popup failed, falling back to window.print()", e);
+  }
+
+  // Fallback to inline window.print
+  const printableArea = document.getElementById('printablePaperArea');
+  if (printableArea) {
+    printableArea.innerHTML = paperContent.innerHTML;
+  }
+  
+  closeModal('printPreviewModal');
+  showToast("Membuka dialog cetak...");
+  setTimeout(() => {
+    window.print();
+  }, 300);
 }

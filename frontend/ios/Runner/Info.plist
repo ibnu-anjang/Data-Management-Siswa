@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aplikasi ini memerlukan akses ke galeri foto untuk mengubah foto profil siswa.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Aplikasi ini memerlukan akses ke kamera untuk mengambil foto profil siswa.</string>
 </dict>
 </plist>

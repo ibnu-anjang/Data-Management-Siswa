@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="lucide.min.js"></script>
+  <script>if (typeof lucide === 'undefined') { document.write('<script src="https://unpkg.com/lucide@latest"><\/script>'); }</script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -25,6 +26,14 @@
     </div>
     
     <div class="header-actions">
+      <!-- Panel Toggle Pill -->
+      <div class="control-group">
+        <span class="control-label">Panel</span>
+        <button id="togglePanelBtn" class="btn-pill active" onclick="togglePresentationPanel()" aria-label="Toggle Panel Presentasi" title="Sembunyikan / Tampilkan Panel Presentasi">
+          <i data-lucide="layout-sidebar" id="togglePanelIcon"></i> <span id="togglePanelLabel">Panel: Tampil</span>
+        </button>
+      </div>
+
       <!-- Theme Switcher Pills -->
       <div class="control-group">
         <span class="control-label">Tema</span>
@@ -64,6 +73,9 @@
         <button class="tab-btn" data-screen="s09" onclick="navTo('s09', true)"><span class="tab-code">S09</span> Profil</button>
         <button class="tab-btn role-admin-tab" data-screen="s10" onclick="navTo('s09', true, 's10'); openAddRombelModal();"><span class="tab-code">S10</span> + Rombel</button>
         <button class="tab-btn role-admin-tab" data-screen="s11" onclick="navTo('s09', true, 's11'); openEditRombelModal('XII IPA 1');"><span class="tab-code">S11</span> ✎ Rombel</button>
+        <button class="tab-btn" data-screen="s12" onclick="openDetailModal(101)"><span class="tab-code">S12</span> 👁 Detail</button>
+        <button class="tab-btn" data-screen="s13" onclick="openPrintModal(currentRole); highlightTab('s13');"><span class="tab-code">S13</span> 🖨 Cetak</button>
+        <button class="tab-btn role-admin-tab" data-screen="s14" onclick="navTo('s09', true, 's14'); openSchoolProfileModal();"><span class="tab-code">S14</span> 🏢 Identitas</button>
       </div>
     </div>
 
@@ -83,14 +95,19 @@
   <main class="viewport-area">
 
     <!-- Presentation & Live Demo Guide Panel (Embedded for Instant Presenting & Frontend Handoff) -->
-    <aside class="presentation-panel">
+    <aside class="presentation-panel" id="presentationPanel">
       <div style="display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #334155; padding-bottom:10px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="display:flex; align-items:center; gap:8px;">
             <i data-lucide="presentation" style="width:18px; height:18px; color:var(--color-primary-light);"></i>
             <h3 style="font-size:14px; font-weight:700; color:#F8FAFC;">Panel Presentasi & Handoff</h3>
           </div>
-          <span class="badge badge-primary" style="font-size:10px;">1:1 Baseline</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="badge badge-primary" style="font-size:10px;">1:1 Baseline</span>
+            <button type="button" class="btn-action-icon" style="color:#94A3B8;" onclick="togglePresentationPanel()" aria-label="Tutup Panel" title="Tutup Panel Presentasi">
+              <i data-lucide="x" class="icon-sm"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Panel Tab Switcher -->
@@ -140,10 +157,10 @@
       <!-- Tab Content 2: Technical Frontend Blueprint (Flutter + Firebase Handoff) -->
       <div id="panelContentHandoff" style="display:none; flex-direction:column; gap:12px;">
         <div class="demo-step-card">
-          <div class="demo-step-title"><i data-lucide="folder-tree" class="icon-sm"></i> Struktur Widget Flutter (1:1 Layout)</div>
+          <div class="demo-step-title"><i data-lucide="folder-tree" class="icon-sm"></i> Struktur Widget Flutter (Pemetaan Layar S01 - S14)</div>
           <div class="demo-step-desc" style="font-family:monospace; font-size:11px; line-height:1.5; color:#93C5FD;">
             lib/<br/>
-            ├── models/ (student_model.dart, class_model.dart)<br/>
+            ├── models/ (student_model.dart, class_model.dart, school_profile_model.dart)<br/>
             ├── theme/ (app_colors.dart, app_theme.dart)<br/>
             ├── screens/<br/>
             │   ├── login_screen.dart (S01)<br/>
@@ -155,24 +172,27 @@
             └── widgets/<br/>
                 ├── student_form_modal.dart (S06 / S07)<br/>
                 ├── delete_dialog.dart (S08)<br/>
-                └── rombel_form_modal.dart (S10 / S11)
+                ├── rombel_form_modal.dart (S10 / S11)<br/>
+                ├── student_detail_modal.dart (S12)<br/>
+                ├── print_preview_modal.dart (S13)<br/>
+                ├── school_profile_modal.dart (S14)<br/>
+                └── filter_bottom_sheet.dart (Filter Bottom Sheet)
           </div>
         </div>
 
         <div class="demo-step-card">
-          <div class="demo-step-title"><i data-lucide="database" class="icon-sm"></i> Schema Firebase Firestore</div>
+          <div class="demo-step-title"><i data-lucide="database" class="icon-sm"></i> Schema Firebase Firestore (Dynamic Sync)</div>
           <div class="demo-step-desc" style="font-family:monospace; font-size:11px; color:#A7F3D0; line-height:1.4;">
             Collection: <strong>students</strong><br/>
-            - id: String (Auto ID)<br/>
-            - name: String<br/>
-            - nis: String<br/>
-            - class: String (e.g. "XII IPA 1")<br/>
-            - gender: String ("Laki-laki" | "Perempuan")<br/>
-            - address: String<br/>
-            - created_at: Timestamp<br/><br/>
+            - id: String | name, nis, class, gender<br/>
+            - address, birth_date, religion<br/>
+            - guardian_name, guardian_phone, status ("Aktif" | "Alumni")<br/><br/>
+            Collection: <strong>school_profile</strong> (Single Doc)<br/>
+            - name ("SMK AK Nusa Bangsa"), npsn, address<br/>
+            - phone, email, academic_year ("2025/2026")<br/>
+            - semester ("Semester Genap"), principal_name, principal_nip<br/><br/>
             Collection: <strong>classes</strong><br/>
-            - name: String (Primary Key)<br/>
-            - sort_order: Number
+            - name: String (Primary Key)
           </div>
         </div>
 
@@ -284,12 +304,21 @@
         <!-- ==========================================
              S02: CLIENT HOME / RECAP
              ========================================== -->
+        <!-- ==========================================
+             S02: CLIENT HOME / RECAP
+             ========================================== -->
         <section id="screen-s02" class="screen-content">
           <div class="app-bar">
-            <div>
-              <h2 class="app-bar-title">Ringkasan Data</h2>
-              <span class="app-bar-subtitle">Informasi siswa & kelas</span>
+            <div class="brand-inline">
+              <div class="brand-logo-sm">
+                <i data-lucide="graduation-cap" class="brand-icon-sm"></i>
+              </div>
+              <div>
+                <h2 class="app-bar-title">SekolahKu</h2>
+                <span class="app-bar-subtitle">Ringkasan Data & Informasi</span>
+              </div>
             </div>
+            <div class="app-bar-avatar-btn" onclick="navTo('s09')" title="Profil Client">CLI</div>
           </div>
 
           <div class="scroll-content" id="clientHomeScrollContainer">
@@ -316,15 +345,25 @@
           </div>
 
           <div class="filter-sticky-bar">
-            <div class="search-box">
-              <i data-lucide="search" class="input-icon"></i>
-              <input type="text" class="form-input" id="clientSearchInput" placeholder="Cari nama atau NIS siswa..." oninput="handleClientFilter()" style="padding-right: 36px;" />
-              <button type="button" class="btn-clear-search" id="clientClearSearchBtn" onclick="clearClientSearch()" aria-label="Hapus Pencarian">
-                <i data-lucide="x-circle" class="icon-sm"></i>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <div class="search-box" style="flex:1;">
+                <i data-lucide="search" class="input-icon"></i>
+                <input type="text" class="form-input" id="clientSearchInput" placeholder="Cari nama atau NIS..." oninput="handleClientFilter()" style="padding-right: 36px;" />
+                <button type="button" class="btn-clear-search" id="clientClearSearchBtn" onclick="clearClientSearch()" aria-label="Hapus Pencarian">
+                  <i data-lucide="x-circle" class="icon-sm"></i>
+                </button>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnOpenFilterClient" onclick="openFilterBottomSheet('client')" title="Filter Data Siswa" style="gap:6px;">
+                <i data-lucide="sliders-horizontal" class="icon-sm"></i> Filter
+                <span class="badge badge-primary" id="badgeFilterCountClient" style="display:none; font-size:10px; padding:1px 6px;">0</span>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openPrintModal('client')" title="Cetak Laporan Siswa" style="white-space:nowrap; gap:6px;">
+                <i data-lucide="printer" class="icon-sm"></i> Cetak
               </button>
             </div>
-            <div class="chip-filter-row" id="clientFilterChipsContainer">
-               <!-- Dynamic chips -->
+
+            <div id="clientActiveFilterSummary" style="margin-top:8px; display:none;">
+              <!-- Dynamic active filter pills injected by JS -->
             </div>
           </div>
 
@@ -345,10 +384,16 @@
              ========================================== -->
         <section id="screen-s04" class="screen-content">
           <div class="app-bar">
-            <div>
-              <h2 class="app-bar-title">Dashboard</h2>
-              <span class="app-bar-subtitle">Ringkasan aktivitas sekolah</span>
+            <div class="brand-inline">
+              <div class="brand-logo-sm">
+                <i data-lucide="graduation-cap" class="brand-icon-sm"></i>
+              </div>
+              <div>
+                <h2 class="app-bar-title">SekolahKu</h2>
+                <span class="app-bar-subtitle">Dashboard Admin</span>
+              </div>
             </div>
+            <div class="app-bar-avatar-btn" onclick="navTo('s09')" title="Profil Admin">ADM</div>
           </div>
 
           <div class="scroll-content" id="adminDashboardScrollContainer">
@@ -378,16 +423,25 @@
           </div>
 
           <div class="filter-sticky-bar">
-            <div class="search-box">
-              <i data-lucide="search" class="input-icon"></i>
-              <input type="text" class="form-input" id="adminSearchInput" placeholder="Cari nama atau NIS..." oninput="handleAdminFilter()" style="padding-right: 36px;" />
-              <button type="button" class="btn-clear-search" id="adminClearSearchBtn" onclick="clearAdminSearch()" aria-label="Hapus Pencarian">
-                <i data-lucide="x-circle" class="icon-sm"></i>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <div class="search-box" style="flex:1;">
+                <i data-lucide="search" class="input-icon"></i>
+                <input type="text" class="form-input" id="adminSearchInput" placeholder="Cari nama atau NIS..." oninput="handleAdminFilter()" style="padding-right: 36px;" />
+                <button type="button" class="btn-clear-search" id="adminClearSearchBtn" onclick="clearAdminSearch()" aria-label="Hapus Pencarian">
+                  <i data-lucide="x-circle" class="icon-sm"></i>
+                </button>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnOpenFilterAdmin" onclick="openFilterBottomSheet('admin')" title="Filter Data Siswa" style="gap:6px;">
+                <i data-lucide="sliders-horizontal" class="icon-sm"></i> Filter
+                <span class="badge badge-primary" id="badgeFilterCountAdmin" style="display:none; font-size:10px; padding:1px 6px;">0</span>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openPrintModal('admin')" title="Cetak Laporan Siswa" style="white-space:nowrap; gap:6px;">
+                <i data-lucide="printer" class="icon-sm"></i> Cetak
               </button>
             </div>
 
-            <div class="chip-filter-row" id="adminFilterChipsContainer">
-               <!-- Dynamic chips -->
+            <div id="adminActiveFilterSummary" style="margin-top:8px; display:none;">
+              <!-- Dynamic active filter pills injected by JS -->
             </div>
           </div>
 
@@ -421,6 +475,19 @@
                 <h3 id="profileName" class="text-title">Administrator Utama</h3>
                 <p id="profileEmail" class="text-caption text-muted">admin@sekolah.sch.id</p>
                 <span id="profileRoleBadge" class="badge badge-primary" style="margin-top:4px;">Peran: Admin</span>
+              </div>
+            </div>
+
+            <!-- Admin School Profile CRUD Section -->
+            <div id="adminSchoolProfileSection" style="margin-top: 16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 class="text-title">Identitas Sekolah & Kop Laporan</h3>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openSchoolProfileModal()">
+                  <i data-lucide="edit-3" class="icon-sm"></i> Ubah Identitas
+                </button>
+              </div>
+              <div class="card-base" style="padding:14px; background:var(--color-surface); border:1px solid var(--color-border);" id="schoolProfileDisplayCard">
+                <!-- Dynamic School Profile Card content injected by JS -->
               </div>
             </div>
 
@@ -475,7 +542,7 @@
            MODALS & DIALOGS (Position Absolute to Phone Frame)
            ========================================================================= -->
 
-      <div class="modal-overlay" id="modalOverlay" onclick="if(event.target === this) { closeModal('studentFormModal'); closeModal('deleteConfirmDialog'); closeModal('rombelFormModal'); }">
+      <div class="modal-overlay" id="modalOverlay" onclick="if(event.target === this) { closeAllModals(); }">
 
         <!-- ROMBEL ADD/EDIT MODAL UI -->
         <div class="modal-card" id="rombelFormModal">
@@ -528,12 +595,22 @@
                 <span class="field-error" id="errorNIS">NIS harus diisi angka</span>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="selectClass">Kelas <span class="required-star">*</span></label>
-                <select id="selectClass" class="form-select">
-                  <option value="" disabled selected>-- Pilih Kelas --</option>
-                </select>
-                <span class="field-error" id="errorClass">Pilih kelas terlebih dahulu</span>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label class="form-label" for="selectClass">Kelas <span class="required-star">*</span></label>
+                  <select id="selectClass" class="form-select">
+                    <option value="" disabled selected>-- Pilih Kelas --</option>
+                  </select>
+                  <span class="field-error" id="errorClass">Pilih kelas terlebih dahulu</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="selectStatus">Status Siswa</label>
+                  <select id="selectStatus" class="form-select">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Alumni">Alumni</option>
+                  </select>
+                </div>
               </div>
 
               <div class="form-group">
@@ -545,6 +622,37 @@
                   <label class="gender-option">
                     <input type="radio" name="gender" value="Perempuan" id="genderP" /> Perempuan
                   </label>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label class="form-label" for="inputBirthDate">Tanggal Lahir</label>
+                  <input type="text" id="inputBirthDate" class="form-input" placeholder="Contoh: 15 Mei 2007" style="padding-left:12px;" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="selectReligion">Agama</label>
+                  <select id="selectReligion" class="form-select">
+                    <option value="Islam">Islam</option>
+                    <option value="Kristen">Kristen</option>
+                    <option value="Katolik">Katolik</option>
+                    <option value="Hindu">Hindu</option>
+                    <option value="Budha">Budha</option>
+                    <option value="Konghucu">Konghucu</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label class="form-label" for="inputGuardianName">Nama Wali / Ortu</label>
+                  <input type="text" id="inputGuardianName" class="form-input" placeholder="Nama wali/orang tua" style="padding-left:12px;" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputGuardianPhone">No. Telp Wali</label>
+                  <input type="tel" id="inputGuardianPhone" class="form-input" placeholder="0812-3456-7890" style="padding-left:12px;" />
                 </div>
               </div>
 
@@ -591,6 +699,165 @@
           </div>
         </div>
 
+        <!-- S12: READ-ONLY STUDENT DETAIL MODAL -->
+        <div class="modal-card" id="studentDetailModal">
+          <div class="modal-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="brand-logo-sm" style="width:28px; height:28px; font-size:12px;">
+                <i data-lucide="user-check" class="icon-sm"></i>
+              </div>
+              <h3 class="modal-title">Detail Siswa (Read-Only)</h3>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeModal('studentDetailModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <div class="modal-body" id="studentDetailContent" style="padding: 16px;">
+            <!-- Dynamic content injected by JS -->
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-full" onclick="closeModal('studentDetailModal')" style="font-weight:600; gap:6px;">
+              <i data-lucide="x" class="icon-sm"></i> Tutup Detail Siswa
+            </button>
+          </div>
+        </div>
+
+        <!-- PRINT PREVIEW MODAL -->
+        <div class="modal-card" id="printPreviewModal" style="max-width:540px; width:92%;">
+          <div class="modal-header">
+            <h3 class="modal-title"><i data-lucide="printer" class="icon-sm"></i> Pratinjau Cetak Laporan</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('printPreviewModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <div class="modal-body" id="printPreviewBody" style="max-height: 420px; overflow-y: auto; overflow-x: auto; padding: 12px; box-sizing: border-box;">
+            <!-- Dynamic report preview injected by JS -->
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('printPreviewModal')">Tutup</button>
+            <button type="button" class="btn btn-primary" onclick="triggerPrint()"><i data-lucide="printer" class="icon-sm"></i> Cetak Sekarang</button>
+          </div>
+        </div>
+
+        <!-- FILTER BOTTOM SHEET MODAL -->
+        <div class="modal-card" id="filterBottomSheetModal">
+          <div class="modal-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <i data-lucide="sliders-horizontal" class="icon-md" style="color:var(--color-primary);"></i>
+              <h3 class="modal-title">Filter Data Siswa</h3>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeModal('filterBottomSheetModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <div class="modal-body" style="padding: 16px;">
+            <!-- Form Field 1: Rombel / Kelas -->
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label" for="filterSelectClass"><i data-lucide="book-open" class="icon-sm"></i> Kategori Rombel (Kelas)</label>
+              <select id="filterSelectClass" class="form-select">
+                <option value="all">-- Semua Rombel (Semua Kelas) --</option>
+                <!-- Injected dynamically -->
+              </select>
+            </div>
+
+            <!-- Form Field 2: Jenis Kelamin -->
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label" for="filterSelectGender"><i data-lucide="users" class="icon-sm"></i> Jenis Kelamin</label>
+              <select id="filterSelectGender" class="form-select">
+                <option value="all">-- Semua Gender --</option>
+                <option value="Laki-laki">👦 Laki-laki</option>
+                <option value="Perempuan">👧 Perempuan</option>
+              </select>
+            </div>
+
+            <!-- Form Field 3: Status Siswa -->
+            <div class="form-group">
+              <label class="form-label" for="filterSelectStatus"><i data-lucide="check-circle" class="icon-sm"></i> Status Keaktifan</label>
+              <select id="filterSelectStatus" class="form-select">
+                <option value="all">-- Semua Status --</option>
+                <option value="Aktif">Siswa Aktif</option>
+                <option value="Alumni">Alumni</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="resetBottomSheetFilters()">Reset</button>
+            <button type="button" class="btn btn-primary" onclick="applyBottomSheetFilters()"><i data-lucide="check" class="icon-sm"></i> Terapkan Filter</button>
+          </div>
+        </div>
+
+        <!-- S14: SCHOOL PROFILE EDIT MODAL -->
+        <div class="modal-card" id="schoolProfileModal">
+          <div class="modal-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <i data-lucide="building-2" class="icon-md" style="color:var(--color-primary);"></i>
+              <h3 class="modal-title">Ubah Identitas Sekolah & Kop Laporan</h3>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="closeModal('schoolProfileModal')" aria-label="Tutup"><i data-lucide="x" class="icon-sm"></i></button>
+          </div>
+
+          <form id="schoolProfileForm" onsubmit="handleSchoolProfileSubmit(event)">
+            <div class="modal-body" style="padding: 16px;">
+              <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" for="inputSchoolName">Nama Sekolah <span class="required-star">*</span></label>
+                <input type="text" id="inputSchoolName" class="form-input" placeholder="Contoh: SMK AK Nusa Bangsa" style="padding-left:12px;" required />
+              </div>
+
+              <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label" for="inputSchoolAddress">Alamat Lengkap Sekolah</label>
+                <input type="text" id="inputSchoolAddress" class="form-input" placeholder="Contoh: Jl. KH. Sholeh Iskandar No. 1, Bogor" style="padding-left:12px;" />
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                <div class="form-group">
+                  <label class="form-label" for="inputSchoolPhone">Telepon Sekolah</label>
+                  <input type="text" id="inputSchoolPhone" class="form-input" placeholder="(0251) 8345678" style="padding-left:12px;" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputSchoolEmail">Email Resmi</label>
+                  <input type="email" id="inputSchoolEmail" class="form-input" placeholder="info@smk-aknusalab.sch.id" style="padding-left:12px;" />
+                </div>
+              </div>
+
+              <!-- Tahun Ajaran & Semester Grid -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+                <div class="form-group">
+                  <label class="form-label" for="inputAcademicYear">Tahun Ajaran <span class="required-star">*</span></label>
+                  <input type="text" id="inputAcademicYear" class="form-input" placeholder="2025/2026" style="padding-left:12px;" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputSemester">Semester <span class="required-star">*</span></label>
+                  <select id="inputSemester" class="form-select">
+                    <option value="Semester Genap">Semester Genap</option>
+                    <option value="Semester Ganjil">Semester Ganjil</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="form-group">
+                  <label class="form-label" for="inputPrincipalName">Nama Kepala Sekolah</label>
+                  <input type="text" id="inputPrincipalName" class="form-input" placeholder="Drs. H. Ahmad Fauzi, M.Pd." style="padding-left:12px;" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="inputPrincipalNIP">NIP Kepala Sekolah</label>
+                  <input type="text" id="inputPrincipalNIP" class="form-input" placeholder="19720815 199803 1 004" style="padding-left:12px;" />
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick="closeModal('schoolProfileModal')">Batal</button>
+              <button type="submit" id="btnSaveSchoolProfile" class="btn btn-primary">
+                <i data-lucide="check" class="icon-sm"></i> Simpan Identitas
+              </button>
+            </div>
+          </form>
+        </div>
+
       </div> <!-- /modal-overlay -->
 
       <!-- Toast Notification -->
@@ -601,6 +868,9 @@
 
     </div> <!-- /phone-frame -->
   </main>
+
+  <!-- Printable Area for Window.print() -->
+  <div id="printablePaperArea" style="display:none;"></div>
 
   <script src="app.js"></script>
 </body>
