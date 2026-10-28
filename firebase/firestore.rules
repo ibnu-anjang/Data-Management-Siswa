@@ -7,14 +7,14 @@ service cloud.firestore {
     match /students/{studentId} {
       allow read: if request.auth != null;
       allow create, update, delete: if request.auth != null
-        && (request.auth.token.email in ['admin@sekolahku.sch.id', 'ibnumaulidi08@gmail.com']);
+        && (request.auth.token.email in ['admin@sekolahku.sch.id', 'sekolahkudatasiswa@gmail.com']);
     }
 
     // Settings (rombel & school profile): authenticated users can read, only verified admin can write
     match /settings/{docId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null
-        && (request.auth.token.email in ['admin@sekolahku.sch.id', 'ibnumaulidi08@gmail.com']);
+        && (request.auth.token.email in ['admin@sekolahku.sch.id', 'sekolahkudatasiswa@gmail.com']);
     }
   }
 }

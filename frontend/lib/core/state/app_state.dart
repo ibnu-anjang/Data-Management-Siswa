@@ -11,7 +11,7 @@ enum AppRole { admin, client }
 // Admin email addresses (in lowercase) — extend this list as needed
 const List<String> _adminEmails = [
   'admin@sekolahku.sch.id',
-  'ibnumaulidi08@gmail.com',
+  'sekolahkudatasiswa@gmail.com',
 ];
 
 /// Checks whether a given email has admin privileges

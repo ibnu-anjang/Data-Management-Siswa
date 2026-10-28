@@ -141,7 +141,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create, update, delete: if request.auth != null
         && (request.auth.token.email.matches('.*admin.*')
-            || request.auth.token.email == 'ibnumaulidi08@gmail.com');
+            || request.auth.token.email == 'sekolahkudatasiswa@gmail.com');
     }
 
     // Koleksi Pengaturan: Read publik untuk user login, write khusus Admin
@@ -149,7 +149,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null
         && (request.auth.token.email.matches('.*admin.*')
-            || request.auth.token.email == 'ibnumaulidi08@gmail.com');
+            || request.auth.token.email == 'sekolahkudatasiswa@gmail.com');
     }
   }
 }

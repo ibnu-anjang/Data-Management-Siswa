@@ -10,15 +10,16 @@
 
 const { initializeApp } = require('firebase/app');
 const { getFirestore, collection, addDoc, setDoc, doc, getDocs, deleteDoc, serverTimestamp } = require('firebase/firestore');
+const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
 
 // ── Firebase Config (dari firebase_options.dart) ──
 const firebaseConfig = {
-  apiKey: 'AIzaSyD6eYMxJAA48rCrLyQpQ2VrrKFz94oLDnk',
-  authDomain: 'data-management-siswa.firebaseapp.com',
-  projectId: 'data-management-siswa',
-  storageBucket: 'data-management-siswa.firebasestorage.app',
-  messagingSenderId: '195154423775',
-  appId: '1:195154423775:web:91365c074d044224fade6a',
+  apiKey: 'AIzaSyCs6K3IH3XRng4ib9HULRwbKsgRBi2IKXY',
+  authDomain: 'sekolahku-app-a3895.firebaseapp.com',
+  projectId: 'sekolahku-app-a3895',
+  storageBucket: 'sekolahku-app-a3895.firebasestorage.app',
+  messagingSenderId: '23768516341',
+  appId: '1:23768516341:web:edd7194dc6b07d664027bc',
 };
 
 // ── Demo Student Data ──
@@ -62,6 +63,11 @@ async function main() {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  console.log('🔑 Authenticating as admin@sekolahku.sch.id...');
+  await signInWithEmailAndPassword(auth, 'admin@sekolahku.sch.id', 'admin123');
+  console.log('   Authenticated successfully!\n');
 
   // ── 1. Clear existing students ──
   console.log('🗑️  Clearing existing students...');

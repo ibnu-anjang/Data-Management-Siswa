@@ -10,7 +10,7 @@ class CloudinaryService {
   CloudinaryService._internal();
 
   // Cloudinary Credentials configured by user
-  static const String cloudName = 'tyxmoxst';
+  static const String cloudName = 'hbzlmngj';
   static const String uploadPreset = 'sekolahku_siswa';
 
   static String get uploadUrl =>

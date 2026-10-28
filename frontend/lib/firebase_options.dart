@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD6eYMxJAA48rCrLyQpQ2VrrKFz94oLDnk',
-    appId: '1:195154423775:web:91365c074d044224fade6a',
-    messagingSenderId: '195154423775',
-    projectId: 'data-management-siswa',
-    authDomain: 'data-management-siswa.firebaseapp.com',
-    storageBucket: 'data-management-siswa.firebasestorage.app',
-    measurementId: 'G-NQHF4P6G2V',
+    apiKey: 'AIzaSyCs6K3IH3XRng4ib9HULRwbKsgRBi2IKXY',
+    appId: '1:23768516341:web:edd7194dc6b07d664027bc',
+    messagingSenderId: '23768516341',
+    projectId: 'sekolahku-app-a3895',
+    authDomain: 'sekolahku-app-a3895.firebaseapp.com',
+    storageBucket: 'sekolahku-app-a3895.firebasestorage.app',
+    measurementId: 'G-V9VZF52D5M',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAEEU9RXUkGwFJUSDrPc-VvcI7OUeAIh6Y',
-    appId: '1:195154423775:android:4b8c72f045cdc734fade6a',
-    messagingSenderId: '195154423775',
-    projectId: 'data-management-siswa',
-    storageBucket: 'data-management-siswa.firebasestorage.app',
+    apiKey: 'AIzaSyDXtDPuM_gaXcInVGDl2Ht_UGTAmZSN0MU',
+    appId: '1:23768516341:android:593860eafcdbd4524027bc',
+    messagingSenderId: '23768516341',
+    projectId: 'sekolahku-app-a3895',
+    storageBucket: 'sekolahku-app-a3895.firebasestorage.app',
   );
 }
