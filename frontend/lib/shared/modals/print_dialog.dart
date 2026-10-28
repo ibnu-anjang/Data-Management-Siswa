@@ -1,10 +1,14 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/models/student_model.dart';
 import '../../core/models/school_profile_model.dart';
 import '../widgets/app_buttons.dart';
 
-class PrintDialogModal extends StatelessWidget {
+class PrintDialogModal extends StatefulWidget {
   final SchoolProfileModel schoolProfile;
   final List<StudentModel> students;
 
@@ -29,10 +33,223 @@ class PrintDialogModal extends StatelessWidget {
   }
 
   @override
+  State<PrintDialogModal> createState() => _PrintDialogModalState();
+}
+
+class _PrintDialogModalState extends State<PrintDialogModal> {
+  bool _isDownloading = false;
+  bool _isPrinting = false;
+
+  static String _monthName(int month) {
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    if (month >= 1 && month <= 12) return months[month - 1];
+    return '';
+  }
+
+  Future<Uint8List> _buildPdfBytes() async {
+    final pdf = pw.Document();
+    final profile = widget.schoolProfile;
+    final now = DateTime.now();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context context) {
+          return [
+            // Kop Surat Sekolah
+            pw.Center(
+              child: pw.Column(
+                children: [
+                  pw.Text(
+                    profile.name.toUpperCase(),
+                    style: pw.TextStyle(
+                      fontSize: 16,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.SizedBox(height: 2),
+                  pw.Text(
+                    'NPSN: ${profile.npsn} | ${profile.address}',
+                    style: const pw.TextStyle(fontSize: 9),
+                  ),
+                  pw.Text(
+                    'Telp: ${profile.phone} | Email: ${profile.email}',
+                    style: const pw.TextStyle(fontSize: 9),
+                  ),
+                  pw.SizedBox(height: 6),
+                  pw.Divider(thickness: 1.5),
+                  pw.SizedBox(height: 8),
+                  pw.Text(
+                    'LAPORAN DATA SISWA AKTIF',
+                    style: pw.TextStyle(
+                      fontSize: 12,
+                      fontWeight: pw.FontWeight.bold,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  pw.Text(
+                    'Tahun Ajaran ${profile.academicYear} — ${profile.semester}',
+                    style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+                  ),
+                  pw.Text(
+                    'Total: ${widget.students.length} Siswa Terdata',
+                    style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 14),
+
+            // Tabel Data Siswa
+            pw.TableHelper.fromTextArray(
+              headers: ['No', 'NISN', 'NIS', 'Nama Lengkap', 'Kelas', 'L/P', 'Status', 'No. HP'],
+              data: widget.students.asMap().entries.map((entry) {
+                final idx = entry.key + 1;
+                final s = entry.value;
+                return [
+                  '$idx',
+                  s.nisn.isNotEmpty ? s.nisn : '-',
+                  s.nis,
+                  s.name,
+                  s.className,
+                  s.gender == 'Laki-laki' ? 'L' : 'P',
+                  s.status,
+                  s.phone.isNotEmpty ? s.phone : '-',
+                ];
+              }).toList(),
+              headerStyle: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
+              headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
+              cellStyle: const pw.TextStyle(fontSize: 8),
+              cellAlignment: pw.Alignment.centerLeft,
+              cellAlignments: {
+                0: pw.Alignment.center,
+                1: pw.Alignment.center,
+                2: pw.Alignment.center,
+                4: pw.Alignment.center,
+                5: pw.Alignment.center,
+                6: pw.Alignment.center,
+              },
+              headerAlignments: {
+                0: pw.Alignment.center,
+                1: pw.Alignment.center,
+                2: pw.Alignment.center,
+                4: pw.Alignment.center,
+                5: pw.Alignment.center,
+                6: pw.Alignment.center,
+              },
+            ),
+            pw.SizedBox(height: 24),
+
+            // Lembar Pengesahan / Tanda Tangan Kepala Sekolah
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Bogor, ${now.day} ${_monthName(now.month)} ${now.year}',
+                      style: const pw.TextStyle(fontSize: 9),
+                    ),
+                    pw.Text('Kepala Sekolah,', style: const pw.TextStyle(fontSize: 9)),
+                    pw.SizedBox(height: 40),
+                    pw.Text(
+                      profile.principalName,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                        decoration: pw.TextDecoration.underline,
+                      ),
+                    ),
+                    pw.Text(
+                      'NIP. ${profile.principalNip}',
+                      style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ];
+        },
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  Future<void> _handleDownloadPdf() async {
+    setState(() => _isDownloading = true);
+    try {
+      final pdfBytes = await _buildPdfBytes();
+      final cleanSchoolName = widget.schoolProfile.name
+          .replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
+          .replaceAll(RegExp(r'_+'), '_');
+      final fileName = 'Laporan_Data_Siswa_$cleanSchoolName.pdf';
+
+      await Printing.sharePdf(
+        bytes: pdfBytes,
+        filename: fileName,
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('File PDF "$fileName" berhasil diunduh.'),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mengunduh PDF: $e'),
+            backgroundColor: AppColors.danger,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isDownloading = false);
+    }
+  }
+
+  Future<void> _handlePrintDirect() async {
+    setState(() => _isPrinting = true);
+    try {
+      final pdfBytes = await _buildPdfBytes();
+      await Printing.layoutPdf(
+        onLayout: (format) async => pdfBytes,
+        name: 'Laporan_Data_Siswa_${widget.schoolProfile.name}',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal membuka dialog cetak: $e'),
+            backgroundColor: AppColors.danger,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isPrinting = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+    final school = widget.schoolProfile;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -42,7 +259,7 @@ class PrintDialogModal extends StatelessWidget {
       insetPadding: const EdgeInsets.all(16),
       child: Container(
         constraints: BoxConstraints(
-          maxWidth: 600,
+          maxWidth: 620,
           maxHeight: MediaQuery.of(context).size.height * 0.90,
         ),
         child: Column(
@@ -80,7 +297,7 @@ class PrintDialogModal extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(),
+            const Divider(height: 1),
 
             // Document Preview Paper (White background for realistic print preview)
             Expanded(
@@ -107,7 +324,7 @@ class PrintDialogModal extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              schoolProfile.name.toUpperCase(),
+                              school.name.toUpperCase(),
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
@@ -116,14 +333,14 @@ class PrintDialogModal extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'NPSN: ${schoolProfile.npsn} | ${schoolProfile.address}',
+                              'NPSN: ${school.npsn} | ${school.address}',
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Colors.black87,
                               ),
                             ),
                             Text(
-                              'Telp: ${schoolProfile.phone} | Email: ${schoolProfile.email}',
+                              'Telp: ${school.phone} | Email: ${school.email}',
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Colors.black87,
@@ -142,7 +359,7 @@ class PrintDialogModal extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Tahun Ajaran ${schoolProfile.academicYear} — ${schoolProfile.semester}',
+                              'Tahun Ajaran ${school.academicYear} — ${school.semester}',
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Colors.black54,
@@ -169,7 +386,7 @@ class PrintDialogModal extends StatelessWidget {
                             DataColumn(label: Text('Kelas', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
                             DataColumn(label: Text('Gender', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
                           ],
-                          rows: students.asMap().entries.map((entry) {
+                          rows: widget.students.asMap().entries.map((entry) {
                             final idx = entry.key + 1;
                             final s = entry.value;
                             return DataRow(
@@ -193,15 +410,18 @@ class PrintDialogModal extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Bogor, 12 Agustus 2026', style: TextStyle(fontSize: 11, color: Colors.black)),
+                              Text(
+                                'Bogor, ${DateTime.now().day} ${_monthName(DateTime.now().month)} ${DateTime.now().year}',
+                                style: const TextStyle(fontSize: 11, color: Colors.black),
+                              ),
                               const Text('Kepala Sekolah,', style: TextStyle(fontSize: 11, color: Colors.black)),
                               const SizedBox(height: 50),
                               Text(
-                                schoolProfile.principalName,
+                                school.principalName,
                                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
                               ),
                               Text(
-                                'NIP. ${schoolProfile.principalNip}',
+                                'NIP. ${school.principalNip}',
                                 style: const TextStyle(fontSize: 11, color: Colors.black54),
                               ),
                             ],
@@ -213,34 +433,31 @@ class PrintDialogModal extends StatelessWidget {
                 ),
               ),
             ),
-            const Divider(),
+            const Divider(height: 1),
 
-            // Actions
+            // Actions: Tutup, Cetak ke Printer, dan Langsung Download PDF
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Row(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.end,
                 children: [
-                  Expanded(
-                    child: SecondaryButton(
-                      label: 'Tutup',
-                      onPressed: () => Navigator.pop(context),
-                    ),
+                  SecondaryButton(
+                    label: 'Tutup',
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: PrimaryButton(
-                      label: 'Cetak Sekarang',
-                      icon: Icons.print,
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Perintah cetak dokumen dikirim ke printer/PDF.'),
-                            backgroundColor: AppColors.primary,
-                          ),
-                        );
-                      },
-                    ),
+                  SecondaryButton(
+                    label: _isPrinting ? 'Mempersiapkan...' : 'Cetak Printer',
+                    icon: Icons.print_outlined,
+                    onPressed: (_isDownloading || _isPrinting) ? null : _handlePrintDirect,
+                  ),
+                  PrimaryButton(
+                    label: _isDownloading ? 'Mengunduh PDF...' : 'Download PDF',
+                    icon: Icons.download_rounded,
+                    isLoading: _isDownloading,
+                    fullWidth: false,
+                    onPressed: (_isDownloading || _isPrinting) ? null : _handleDownloadPdf,
                   ),
                 ],
               ),

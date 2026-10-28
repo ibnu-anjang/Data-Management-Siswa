@@ -1,18 +1,129 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../app/theme/app_colors.dart';
+import '../core/services/cloudinary_service.dart';
 import '../core/state/app_state.dart';
 import '../shared/widgets/app_bottom_nav_bar.dart';
 import '../shared/widgets/app_buttons.dart';
 import '../shared/modals/rombel_form_modal.dart';
 import '../shared/modals/school_profile_modal.dart';
 
-class S09ProfileScreen extends StatelessWidget {
+class S09ProfileScreen extends StatefulWidget {
   final AppState appState;
 
   const S09ProfileScreen({super.key, required this.appState});
 
   @override
+  State<S09ProfileScreen> createState() => _S09ProfileScreenState();
+}
+
+class _S09ProfileScreenState extends State<S09ProfileScreen> {
+  bool _isUploadingPhoto = false;
+
+  Future<void> _handlePickProfilePhoto() async {
+    if (_isUploadingPhoto) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+    final textColor = isDark ? AppColors.textDark : AppColors.textLight;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Foto Profil Pengguna',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_rounded, color: AppColors.primary),
+                  title: Text('Pilih dari Galeri', style: TextStyle(color: textColor)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickAndUploadPhoto(ImageSource.gallery);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt_rounded, color: AppColors.primary),
+                  title: Text('Ambil Foto Kamera', style: TextStyle(color: textColor)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickAndUploadPhoto(ImageSource.camera);
+                  },
+                ),
+                if (widget.appState.userPhotoUrl.isNotEmpty)
+                  ListTile(
+                    leading: const Icon(Icons.delete_outline_rounded, color: AppColors.danger),
+                    title: const Text('Hapus Foto Profil', style: TextStyle(color: AppColors.danger)),
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      await widget.appState.updateUserPhoto('');
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndUploadPhoto(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final file = await picker.pickImage(
+        source: source,
+        maxWidth: 600,
+        maxHeight: 600,
+        imageQuality: 80,
+      );
+      if (file == null) return;
+
+      setState(() => _isUploadingPhoto = true);
+      final uploadedUrl = await CloudinaryService().uploadImage(file);
+      if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
+        await widget.appState.updateUserPhoto(uploadedUrl);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Foto profil berhasil diperbarui!'),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal memperbarui foto: $e'),
+            backgroundColor: AppColors.danger,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUploadingPhoto = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final appState = widget.appState;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final textMuted = isDark ? AppColors.textMutedDark : AppColors.textMutedLight;
@@ -83,17 +194,85 @@ class S09ProfileScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundColor: isAdmin ? AppColors.primary : AppColors.success,
-                            child: Text(
-                              isAdmin ? 'ADM' : 'CLT',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                          Stack(
+                            children: [
+                              InkWell(
+                                onTap: () => _handlePickProfilePhoto(),
+                                borderRadius: BorderRadius.circular(32),
+                                child: Container(
+                                  width: 52,
+                                  height: 52,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isAdmin ? AppColors.primary : AppColors.success,
+                                    border: Border.all(
+                                      color: isAdmin ? AppColors.primary : AppColors.success,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: ClipOval(
+                                    child: _isUploadingPhoto
+                                        ? const Center(
+                                            child: SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                        : (appState.userPhotoUrl.isNotEmpty
+                                            ? Image.network(
+                                                appState.userPhotoUrl,
+                                                fit: BoxFit.cover,
+                                                width: 52,
+                                                height: 52,
+                                                errorBuilder: (ctx, err, st) => Center(
+                                                  child: Text(
+                                                    isAdmin ? 'ADM' : 'CLT',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : Center(
+                                                child: Text(
+                                                  isAdmin ? 'ADM' : 'CLT',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              )),
+                                  ),
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () => _handlePickProfilePhoto(),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                      color: isDark ? AppColors.surfaceDark : Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: borderColor),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      size: 11,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -350,7 +529,7 @@ class S09ProfileScreen extends StatelessWidget {
   }
 
   void _confirmDeleteRombel(BuildContext context, String cls) {
-    final count = appState.getStudentCountByClass(cls);
+    final count = widget.appState.getStudentCountByClass(cls);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
@@ -462,7 +641,7 @@ class S09ProfileScreen extends StatelessWidget {
                         label: 'Hapus',
                         onPressed: () {
                           Navigator.pop(ctx);
-                          appState.deleteRombel(cls);
+                          widget.appState.deleteRombel(cls);
                         },
                       ),
                     ),

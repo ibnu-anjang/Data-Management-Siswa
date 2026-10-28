@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../app/theme/app_colors.dart';
 import '../core/state/app_state.dart';
 import '../shared/widgets/app_bottom_nav_bar.dart';
+import '../shared/widgets/app_buttons.dart';
 
 class S02ClientHomeScreen extends StatelessWidget {
   final AppState appState;
@@ -33,16 +34,28 @@ class S02ClientHomeScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
-                      borderRadius: BorderRadius.circular(8),
+                  if (appState.userPhotoUrl.isNotEmpty) ...[
+                    ClipOval(
+                      child: Image.network(
+                        appState.userPhotoUrl,
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    child: const Icon(Icons.school_rounded, color: AppColors.primary, size: 20),
-                  ),
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 10),
+                  ] else ...[
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.school_rounded, color: AppColors.primary, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,6 +289,17 @@ class S02ClientHomeScreen extends StatelessWidget {
                             ),
                           ),
                         );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Red Logout Button for Client
+                    DangerButton(
+                      label: 'Keluar dari Akun (Logout)',
+                      icon: Icons.logout_rounded,
+                      fullWidth: true,
+                      onPressed: () async {
+                        await appState.logout();
                       },
                     ),
                   ],

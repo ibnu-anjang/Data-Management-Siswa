@@ -267,7 +267,7 @@
                 <label class="form-label" for="loginEmail">Email</label>
                 <div class="input-wrapper">
                   <i data-lucide="mail" class="input-icon"></i>
-                  <input type="email" id="loginEmail" class="form-input" placeholder="contoh@sekolah.sch.id" value="admin@sekolah.sch.id" required autocomplete="email" />
+                  <input type="email" id="loginEmail" class="form-input" placeholder="client@sekolahku.sch.id" value="client@sekolahku.sch.id" required autocomplete="email" />
                 </div>
               </div>
 
@@ -275,7 +275,7 @@
                 <label class="form-label" for="loginPassword">Kata Sandi</label>
                 <div class="input-wrapper">
                   <i data-lucide="lock" class="input-icon"></i>
-                  <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan kata sandi" value="password123" required autocomplete="current-password" />
+                  <input type="password" id="loginPassword" class="form-input" placeholder="Masukkan kata sandi" value="client123" required autocomplete="current-password" />
                   <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('loginPassword')" aria-label="Toggle Password Visibility">
                     <i data-lucide="eye" id="eyeIcon"></i>
                   </button>
@@ -627,12 +627,12 @@
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div class="form-group">
-                  <label class="form-label" for="inputBirthDate">Tanggal Lahir</label>
-                  <input type="text" id="inputBirthDate" class="form-input" placeholder="Contoh: 15 Mei 2007" style="padding-left:12px;" />
+                  <label class="form-label" for="inputBirthDate">Tanggal Lahir <span class="required-star">*</span></label>
+                  <input type="text" id="inputBirthDate" class="form-input" placeholder="Contoh: 15 Mei 2007" style="padding-left:12px;" required />
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label" for="selectReligion">Agama</label>
+                  <label class="form-label" for="selectReligion">Agama <span class="required-star">*</span></label>
                   <select id="selectReligion" class="form-select">
                     <option value="Islam">Islam</option>
                     <option value="Kristen">Kristen</option>
@@ -646,19 +646,19 @@
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div class="form-group">
-                  <label class="form-label" for="inputGuardianName">Nama Wali / Ortu</label>
-                  <input type="text" id="inputGuardianName" class="form-input" placeholder="Nama wali/orang tua" style="padding-left:12px;" />
+                  <label class="form-label" for="inputGuardianName">Nama Wali / Ortu <span class="required-star">*</span></label>
+                  <input type="text" id="inputGuardianName" class="form-input" placeholder="Nama wali/orang tua" style="padding-left:12px;" required />
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label" for="inputGuardianPhone">No. Telp Wali</label>
-                  <input type="tel" id="inputGuardianPhone" class="form-input" placeholder="0812-3456-7890" style="padding-left:12px;" />
+                  <label class="form-label" for="inputGuardianPhone">No. Telp Wali <span class="required-star">*</span></label>
+                  <input type="tel" id="inputGuardianPhone" class="form-input" placeholder="0812-3456-7890" style="padding-left:12px;" required />
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="inputAddress">Alamat Lengkap</label>
-                <textarea id="inputAddress" class="form-textarea" rows="2" placeholder="Masukkan alamat rumah"></textarea>
+                <label class="form-label" for="inputAddress">Alamat Lengkap <span class="required-star">*</span></label>
+                <textarea id="inputAddress" class="form-textarea" rows="2" placeholder="Masukkan alamat rumah" required></textarea>
               </div>
             </div>
 

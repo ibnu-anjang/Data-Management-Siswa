@@ -116,6 +116,17 @@ class S04AdminDashboardScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        if (appState.userPhotoUrl.isNotEmpty) ...[
+                          ClipOval(
+                            child: Image.network(
+                              appState.userPhotoUrl,
+                              width: 36,
+                              height: 36,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                        ],
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,7 +462,7 @@ class S04AdminDashboardScreen extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // Logout Action explicitly shown on Dashboard for requirement
-                    SecondaryButton(
+                    DangerButton(
                       label: 'Keluar dari Aplikasi (Logout)',
                       icon: Icons.logout_rounded,
                       fullWidth: true,

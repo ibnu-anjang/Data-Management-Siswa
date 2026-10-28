@@ -16,6 +16,8 @@ class AppTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool autofocus;
+  final EdgeInsets scrollPadding;
 
   const AppTextField({
     super.key,
@@ -32,6 +34,8 @@ class AppTextField extends StatelessWidget {
     this.inputFormatters,
     this.readOnly = false,
     this.onTap,
+    this.autofocus = false,
+    this.scrollPadding = const EdgeInsets.only(bottom: 120, top: 20),
   });
 
   @override
@@ -62,6 +66,8 @@ class AppTextField extends StatelessWidget {
           inputFormatters: inputFormatters,
           readOnly: readOnly,
           onTap: onTap,
+          autofocus: autofocus,
+          scrollPadding: scrollPadding,
           style: TextStyle(
             fontSize: 14,
             color: labelColor,

@@ -66,6 +66,8 @@ class _StudentFormModalState extends State<StudentFormModal> {
   String? _phoneError;
   String? _birthDateError;
   String? _addressError;
+  String? _guardianNameError;
+  String? _guardianPhoneError;
 
   // ── Photo Upload State ──
   String _photoUrl = '';
@@ -247,7 +249,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
     final guardianNameTrim = _guardianNameController.text.trim();
     final guardianPhoneTrim = _guardianPhoneController.text.trim();
 
-    // Validasi semua data wajib diisi (sesuai syarat ujikom)
+    // Validasi semua data siswa wajib diisi lengkap
     if (nameTrim.isEmpty ||
         nisnTrim.isEmpty ||
         nisTrim.isEmpty ||
@@ -256,11 +258,13 @@ class _StudentFormModalState extends State<StudentFormModal> {
         phoneTrim.isEmpty ||
         addressTrim.isEmpty ||
         birthDateTrim.isEmpty ||
+        guardianNameTrim.isEmpty ||
+        guardianPhoneTrim.isEmpty ||
         _selectedClass == null) {
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Data harus diisi dengan lengkap.'),
+          content: Text('Semua data siswa wajib diisi dengan lengkap.'),
           backgroundColor: AppColors.danger,
           duration: Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -278,6 +282,8 @@ class _StudentFormModalState extends State<StudentFormModal> {
         _addressError = addressTrim.isEmpty ? 'Wajib diisi' : null;
         _birthDateError = birthDateTrim.isEmpty ? 'Wajib diisi' : null;
         _classError = _selectedClass == null ? 'Pilih kelas' : null;
+        _guardianNameError = guardianNameTrim.isEmpty ? 'Wajib diisi' : null;
+        _guardianPhoneError = guardianPhoneTrim.isEmpty ? 'Wajib diisi' : null;
       });
       return;
     }
@@ -291,9 +297,14 @@ class _StudentFormModalState extends State<StudentFormModal> {
       _nisError = (!RegExp(r'^[0-9]+$').hasMatch(nisTrim)) ? 'NIS hanya boleh berisi angka' : null;
       
       _phoneError = (phoneTrim.length < 9 || phoneTrim.length > 15) ? 'Nomor telepon tidak valid' : null;
+      _guardianPhoneError = (guardianPhoneTrim.length < 9 || guardianPhoneTrim.length > 15) ? 'Nomor telepon wali tidak valid' : null;
     });
 
-    if (_nameError != null || _nisnError != null || _nisError != null || _phoneError != null) {
+    if (_nameError != null ||
+        _nisnError != null ||
+        _nisError != null ||
+        _phoneError != null ||
+        _guardianPhoneError != null) {
       return;
     }
 
@@ -341,6 +352,9 @@ class _StudentFormModalState extends State<StudentFormModal> {
     final dialogBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final isEdit = widget.initialStudent != null;
+    final mediaQuery = MediaQuery.of(context);
+    final availableHeight = mediaQuery.size.height - mediaQuery.viewInsets.bottom - 48;
+    final maxHeight = availableHeight > 280 ? availableHeight : 280.0;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -351,7 +365,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 500,
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
+          maxHeight: maxHeight,
         ),
         child: Column(
           children: [
@@ -385,6 +399,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
             // Form Body Scrollable (1:1 design/index.html lines 584-655)
             Expanded(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,7 +627,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
                       children: [
                         Expanded(
                           child: AppDropdown<String>(
-                            label: 'Agama',
+                            label: 'Agama *',
                             value: _selectedReligion,
                             items: const [
                               DropdownMenuItem(value: 'Islam', child: Text('Islam')),
@@ -630,7 +645,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: AppDropdown<String>(
-                            label: 'Status Siswa',
+                            label: 'Status Siswa *',
                             value: _selectedStatus,
                             items: const [
                               DropdownMenuItem(value: 'Aktif', child: Text('Aktif')),
@@ -662,9 +677,10 @@ class _StudentFormModalState extends State<StudentFormModal> {
                       children: [
                         Expanded(
                           child: AppTextField(
-                            label: 'Nama Wali / Ortu',
+                            label: 'Nama Wali / Ortu *',
                             hint: 'Nama wali/orang tua',
                             controller: _guardianNameController,
+                            errorText: _guardianNameError,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s\-\.\'\`]")),
                             ],
@@ -673,10 +689,11 @@ class _StudentFormModalState extends State<StudentFormModal> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: AppTextField(
-                            label: 'No. Telp Wali',
+                            label: 'No. Telp Wali *',
                             hint: 'Contoh: 08123456789',
                             controller: _guardianPhoneController,
                             keyboardType: TextInputType.phone,
+                            errorText: _guardianPhoneError,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(r'[0-9\+\-\s]')),
                             ],

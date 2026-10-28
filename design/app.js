@@ -943,10 +943,10 @@ function handleFormSubmit(e) {
   const genderRadio = document.querySelector('input[name="gender"]:checked');
   const gender = genderRadio ? genderRadio.value : 'Laki-laki';
 
-  const birthDate = (document.getElementById('inputBirthDate') && document.getElementById('inputBirthDate').value.trim()) || "15 Mei 2007";
+  const birthDate = (document.getElementById('inputBirthDate') && document.getElementById('inputBirthDate').value.trim()) || "";
   const religion = (document.getElementById('selectReligion') && document.getElementById('selectReligion').value) || "Islam";
-  const guardianName = (document.getElementById('inputGuardianName') && document.getElementById('inputGuardianName').value.trim()) || "Bpk. Subagyo";
-  const guardianPhone = (document.getElementById('inputGuardianPhone') && document.getElementById('inputGuardianPhone').value.trim()) || "0812-3456-7890";
+  const guardianName = (document.getElementById('inputGuardianName') && document.getElementById('inputGuardianName').value.trim()) || "";
+  const guardianPhone = (document.getElementById('inputGuardianPhone') && document.getElementById('inputGuardianPhone').value.trim()) || "";
   const status = (document.getElementById('selectStatus') && document.getElementById('selectStatus').value) || "Aktif";
   const address = document.getElementById('inputAddress').value.trim();
 
@@ -955,6 +955,10 @@ function handleFormSubmit(e) {
   if (!nis) { showFieldError('inputNIS', 'errorNIS', 'NIS harus diisi angka'); hasError = true; }
   else if (!/^\d+$/.test(nis)) { showFieldError('inputNIS', 'errorNIS', 'NIS harus diisi angka'); hasError = true; }
   if (!className) { showFieldError('selectClass', 'errorClass', 'Pilih kelas terlebih dahulu'); hasError = true; }
+  if (!birthDate) { showToast("Tanggal lahir wajib diisi", "danger"); hasError = true; }
+  if (!guardianName) { showToast("Nama wali/ortu wajib diisi", "danger"); hasError = true; }
+  if (!guardianPhone) { showToast("Nomor telepon wali wajib diisi", "danger"); hasError = true; }
+  if (!address) { showToast("Alamat lengkap wajib diisi", "danger"); hasError = true; }
 
   if (hasError) return;
 
@@ -1548,6 +1552,16 @@ function triggerPrint() {
   
   closeModal('printPreviewModal');
   showToast("Membuka dialog cetak...");
+}
+
+// Auto scroll-into-view on mobile input focus
+document.addEventListener('focusin', function (e) {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+    setTimeout(function() {
+      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+  }
+});
   setTimeout(() => {
     window.print();
   }, 300);

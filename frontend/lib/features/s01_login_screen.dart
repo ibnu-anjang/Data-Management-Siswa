@@ -169,7 +169,7 @@ class _S01LoginScreenState extends State<S01LoginScreen> {
                       // Email Field
                       AppTextField(
                         label: 'Email / Username',
-                        hint: 'admin@sekolahku.sch.id',
+                        hint: 'client@sekolahku.sch.id',
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         prefixIcon: const Icon(Icons.email_outlined, size: 18),

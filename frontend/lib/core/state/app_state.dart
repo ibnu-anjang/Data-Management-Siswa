@@ -62,6 +62,16 @@ class AppState extends ChangeNotifier {
   User? get firebaseUser => _firebaseUser;
   String get userEmail => _firebaseUser?.email ?? '';
   String get userName => _firebaseUser?.displayName ?? userEmail.split('@').first;
+  String get userPhotoUrl => _firebaseUser?.photoURL ?? '';
+
+  Future<void> updateUserPhoto(String photoUrl) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updatePhotoURL(photoUrl.isEmpty ? null : photoUrl);
+      _firebaseUser = _auth.currentUser;
+      notifyListeners();
+    }
+  }
 
   // ── Navigation ──
   String _activeScreen = 's01';
