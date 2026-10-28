@@ -131,5 +131,31 @@ void main() {
       expect(studentWithPhoto.photoUrl, 'https://res.cloudinary.com/tyxmoxst/image/upload/v1234/foto.jpg');
       expect(studentWithPhoto.toJson()['photoUrl'], 'https://res.cloudinary.com/tyxmoxst/image/upload/v1234/foto.jpg');
     });
+
+    test('StudentModel copyWith preserves and updates photoUrl', () {
+      const student = StudentModel(
+        id: 101,
+        name: 'Ahmad',
+        nisn: '0071234501',
+        nis: '210101',
+        className: 'XII IPA 1',
+        major: 'IPA',
+        gender: 'Laki-laki',
+        birthPlace: 'Bogor',
+        birthDate: '15 Mei 2007',
+        religion: 'Islam',
+        phone: '08123456789',
+        guardianName: 'Subagyo',
+        guardianPhone: '08123456789',
+        address: 'Jl. Sudirman',
+        status: 'Aktif',
+        photoUrl: 'https://res.cloudinary.com/hbzlmngj/photo.jpg',
+      );
+      expect(student.photoUrl, 'https://res.cloudinary.com/hbzlmngj/photo.jpg');
+
+      final updated = student.copyWith(photoUrl: 'https://res.cloudinary.com/hbzlmngj/new_photo.jpg');
+      expect(updated.photoUrl, 'https://res.cloudinary.com/hbzlmngj/new_photo.jpg');
+      expect(updated.name, 'Ahmad');
+    });
   });
 }

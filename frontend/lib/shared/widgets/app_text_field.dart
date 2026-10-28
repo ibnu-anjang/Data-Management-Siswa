@@ -19,6 +19,8 @@ class AppTextField extends StatefulWidget {
   final bool autofocus;
   final EdgeInsets scrollPadding;
   final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
 
   const AppTextField({
     super.key,
@@ -36,8 +38,10 @@ class AppTextField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.autofocus = false,
-    this.scrollPadding = const EdgeInsets.only(bottom: 160, top: 40),
+    this.scrollPadding = const EdgeInsets.only(bottom: 220, top: 40),
     this.focusNode,
+    this.textInputAction,
+    this.onSubmitted,
   });
 
   @override
@@ -89,12 +93,25 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   void _scrollToCenter() {
-    Future.delayed(const Duration(milliseconds: 320), () {
+    // Stage 1: Quick scroll for immediate feedback / physical keyboards
+    Future.delayed(const Duration(milliseconds: 180), () {
       if (mounted && _focusNode.hasFocus) {
         Scrollable.ensureVisible(
           context,
-          alignment: 0.35,
-          duration: const Duration(milliseconds: 300),
+          alignment: 0.15,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+
+    // Stage 2: Second scroll to lock position once mobile soft keyboard finishes opening
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (mounted && _focusNode.hasFocus) {
+        Scrollable.ensureVisible(
+          context,
+          alignment: 0.15,
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
         );
       }
@@ -131,6 +148,8 @@ class _AppTextFieldState extends State<AppTextField> {
           focusNode: _focusNode,
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          onSubmitted: widget.onSubmitted,
           maxLines: widget.maxLines,
           onChanged: widget.onChanged,
           inputFormatters: widget.inputFormatters,

@@ -319,6 +319,18 @@ class _StudentFormModalState extends State<StudentFormModal> {
       final uploadedUrl = await CloudinaryService().uploadImage(_pickedImage!);
       if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
         finalPhotoUrl = uploadedUrl;
+      } else {
+        if (mounted) {
+          setState(() => _isUploading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Gagal mengunggah foto ke cloud storage. Coba periksa koneksi internet.'),
+              backgroundColor: AppColors.danger,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+        return;
       }
     } else if (_isPhotoRemoved) {
       finalPhotoUrl = '';
@@ -357,15 +369,14 @@ class _StudentFormModalState extends State<StudentFormModal> {
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final isEdit = widget.initialStudent != null;
     final mediaQuery = MediaQuery.of(context);
-    final availableHeight = mediaQuery.size.height - mediaQuery.viewInsets.bottom - 48;
-    final maxHeight = availableHeight > 280 ? availableHeight : 280.0;
+    final maxHeight = mediaQuery.size.height * 0.88;
 
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       backgroundColor: dialogBg,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 500,

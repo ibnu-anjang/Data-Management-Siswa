@@ -104,15 +104,14 @@ class _SchoolProfileModalState extends State<SchoolProfileModal> {
     final dialogBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final textColor = isDark ? AppColors.textDark : AppColors.textLight;
     final mediaQuery = MediaQuery.of(context);
-    final availableHeight = mediaQuery.size.height - mediaQuery.viewInsets.bottom - 48;
-    final maxHeight = availableHeight > 280 ? availableHeight : 280.0;
+    final maxHeight = mediaQuery.size.height * 0.88;
 
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       backgroundColor: dialogBg,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Container(
         constraints: BoxConstraints(
           maxWidth: 520,

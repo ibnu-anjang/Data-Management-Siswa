@@ -5,6 +5,7 @@ import '../shared/widgets/app_bottom_nav_bar.dart';
 import '../shared/widgets/app_buttons.dart';
 import '../shared/modals/student_form_modal.dart';
 import '../shared/modals/print_dialog.dart';
+import '../shared/modals/school_profile_modal.dart';
 
 class S04AdminDashboardScreen extends StatelessWidget {
   final AppState appState;
@@ -144,17 +145,37 @@ class S04AdminDashboardScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryLight,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              school.name,
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.primary),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          child: InkWell(
+                            onTap: () {
+                              SchoolProfileModal.show(
+                                context: context,
+                                initialProfile: school,
+                                onSubmit: (updated) => appState.updateSchoolProfile(updated),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(999),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      school.name,
+                                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.primary),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.edit_outlined, size: 10, color: AppColors.primary),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -411,11 +432,13 @@ class S04AdminDashboardScreen extends StatelessWidget {
                       icon: Icons.person_add_alt_outlined,
                       fullWidth: true,
                       onPressed: () {
-                        appState.navTo('s05');
                         StudentFormModal.show(
                           context: context,
                           rombelList: appState.rombelList,
-                          onSubmit: (student) => appState.addStudent(student),
+                          onSubmit: (student) {
+                            appState.addStudent(student);
+                            appState.navTo('s05');
+                          },
                         );
                       },
                     ),

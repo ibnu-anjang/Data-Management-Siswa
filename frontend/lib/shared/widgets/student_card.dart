@@ -57,6 +57,21 @@ class StudentCard extends StatelessWidget {
                         width: 40,
                         height: 40,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: AppColors.primaryLight,
+                            alignment: Alignment.center,
+                            child: const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                              ),
+                            ),
+                          );
+                        },
                         errorBuilder: (context, error, stackTrace) => Text(
                           student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
                           style: const TextStyle(
@@ -121,7 +136,7 @@ class StudentCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      '${student.className} ${student.major}',
+                      student.className,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,

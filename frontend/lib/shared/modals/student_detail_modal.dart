@@ -123,6 +123,21 @@ class StudentDetailModal extends StatelessWidget {
                                     width: 72,
                                     height: 72,
                                     fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        color: AppColors.primary,
+                                        alignment: Alignment.center,
+                                        child: const SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     errorBuilder: (context, error, stackTrace) => Text(
                                       student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
                                       style: const TextStyle(
@@ -182,7 +197,7 @@ class StudentDetailModal extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  '${student.className} - ${student.major}',
+                                  'Kelas ${student.className}',
                                   style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
                                 ),
                               ),
