@@ -92,7 +92,7 @@ class _PrintDialogModalState extends State<PrintDialogModal> {
                     ),
                   ),
                   pw.Text(
-                    'Tahun Ajaran ${profile.academicYear} — ${profile.semester}',
+                    'Tahun Ajaran ${profile.academicYear} - ${profile.semester}',
                     style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
                   ),
                   pw.Text(
@@ -359,7 +359,7 @@ class _PrintDialogModalState extends State<PrintDialogModal> {
                               ),
                             ),
                             Text(
-                              'Tahun Ajaran ${school.academicYear} — ${school.semester}',
+                              'Tahun Ajaran ${school.academicYear} - ${school.semester}',
                               style: const TextStyle(
                                 fontSize: 11,
                                 color: Colors.black54,

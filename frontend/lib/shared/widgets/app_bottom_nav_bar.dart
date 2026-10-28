@@ -36,62 +36,44 @@ class AppBottomNavBar extends StatelessWidget {
     }
 
     return Container(
-      height: 64,
-      padding: const EdgeInsets.only(bottom: 12),
+      height: 58,
       decoration: BoxDecoration(
         color: navBg,
         border: Border(
           top: BorderSide(color: borderColor),
         ),
       ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: items.map((item) {
-                final isSelected = activeScreen == item.screen;
-                final color = isSelected
-                    ? AppColors.primary
-                    : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight);
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: items.map((item) {
+          final isSelected = activeScreen == item.screen;
+          final color = isSelected
+              ? AppColors.primary
+              : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight);
 
-                return Expanded(
-                  child: InkWell(
-                    onTap: () => onSelectTab(item.screen),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(item.icon, color: color, size: 20),
-                        const SizedBox(height: 2),
-                        Text(
-                          item.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                            color: color,
-                          ),
-                        ),
-                      ],
+          return Expanded(
+            child: InkWell(
+              onTap: () => onSelectTab(item.screen),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(item.icon, color: color, size: 21),
+                  const SizedBox(height: 3),
+                  Text(
+                    item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color: color,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-          ),
-          // Mobile Home Indicator Line 1:1 with styles.css .phone-home-indicator
-          Center(
-            child: Container(
-              width: 120,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.textMutedDark.withValues(alpha: 0.3) : AppColors.textMutedLight.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(999),
+                ],
               ),
             ),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
