@@ -131,6 +131,7 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
                     controller: _controller,
                     focusNode: _focusNode,
                     onChanged: _onQueryChanged,
+                    textAlignVertical: TextAlignVertical.center,
                     onTap: () {
                       if (_controller.text.trim().isNotEmpty) {
                         setState(() => _isOpen = true);
@@ -144,11 +145,16 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
                     decoration: InputDecoration(
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        fontSize: 13.5,
+                        fontSize: 14,
                         color: textMuted,
                         fontWeight: FontWeight.w400,
                       ),
                       border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      filled: false,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                     ),
