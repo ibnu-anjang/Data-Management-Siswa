@@ -97,12 +97,12 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search Input Bar
+          // Search Input Bar (Roomy, clear, modern desktop/mobile height)
           Container(
-            height: 46,
+            height: 52,
             decoration: BoxDecoration(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: _isOpen ? AppColors.primary : borderColor,
                 width: _isOpen ? 1.5 : 1.0,
@@ -119,13 +119,13 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
             ),
             child: Row(
               children: [
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Icon(
                   Icons.search_rounded,
-                  size: 20,
+                  size: 22,
                   color: _isOpen ? AppColors.primary : textMuted,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -137,14 +137,14 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
                       }
                     },
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: textColor,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: 13.5,
                         color: textMuted,
                         fontWeight: FontWeight.w400,
                       ),
@@ -156,12 +156,12 @@ class _DashboardSpotlightSearchState extends State<DashboardSpotlightSearch> {
                 ),
                 if (hasQuery)
                   IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 18),
+                    icon: const Icon(Icons.close_rounded, size: 20),
                     color: textMuted,
-                    splashRadius: 18,
+                    splashRadius: 20,
                     onPressed: _clearSearch,
                   ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 6),
               ],
             ),
           ),

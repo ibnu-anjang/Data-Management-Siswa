@@ -256,5 +256,56 @@ void main() {
       expect(find.text('42'), findsOneWidget);
       expect(find.text('Siswa'), findsOneWidget);
     });
+
+    testWidgets('Dashboard greeting row keeps avatar and greeting adjacent on wide screens', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1040),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const AppAvatar(name: 'Administrator', size: 46),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Text('Selamat Pagi, Admin'),
+                                Text('Kamis, 29 Oktober 2026'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Text('SMK AK Nusa Bangsa'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final avatarRect = tester.getRect(find.byType(AppAvatar));
+      final greetingRect = tester.getRect(find.text('Selamat Pagi, Admin'));
+
+      // Spacing between avatar's right edge and greeting's left edge must strictly be 14px (+- 0.5px)
+      final gap = greetingRect.left - avatarRect.right;
+      expect(gap, closeTo(14.0, 0.5));
+    });
   });
 }

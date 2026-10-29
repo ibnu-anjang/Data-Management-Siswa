@@ -143,75 +143,86 @@ class S04AdminDashboardScreen extends StatelessWidget {
                           // Top Dynamic Time Greeting & School Pill
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              AppAvatar(
-                                name: appState.userName.isNotEmpty ? appState.userName : 'Administrator',
-                                photoUrl: appState.userPhotoUrl,
-                                size: 44,
-                                backgroundColor: AppColors.primary,
-                                textColor: Colors.white,
-                                fontSize: 18,
-                                showBorder: true,
-                                borderColor: AppColors.primary.withValues(alpha: 0.3),
-                              ),
-                              const SizedBox(width: 12),
+                              // Left Group: Avatar + Greeting Text (Grouped tightly together)
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Text(
-                                      '${AppDateUtils.getTimeGreeting()}, Admin',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: textColor,
-                                      ),
+                                    AppAvatar(
+                                      name: appState.userName.isNotEmpty ? appState.userName : 'Administrator',
+                                      photoUrl: appState.userPhotoUrl,
+                                      size: 46,
+                                      backgroundColor: AppColors.primary,
+                                      textColor: Colors.white,
+                                      fontSize: 18,
+                                      showBorder: true,
+                                      borderColor: AppColors.primary.withValues(alpha: 0.3),
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${AppDateUtils.getFormattedToday()} • ${school.semester}',
-                                      style: TextStyle(fontSize: 11.5, color: textMuted),
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '${AppDateUtils.getTimeGreeting()}, Admin',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                              color: textColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${AppDateUtils.getFormattedToday()} • ${school.semester}',
+                                            style: TextStyle(fontSize: 12, color: textMuted),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () {
-                                    SchoolProfileModal.show(
-                                      context: context,
-                                      initialProfile: school,
-                                      onSubmit: (updated) => appState.updateSchoolProfile(updated),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryLight,
-                                      borderRadius: BorderRadius.circular(999),
-                                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            school.name,
-                                            style: const TextStyle(
-                                              fontSize: 10.5,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primary,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                              const SizedBox(width: 12),
+                              // Right Group: School Pill
+                              InkWell(
+                                onTap: () {
+                                  SchoolProfileModal.show(
+                                    context: context,
+                                    initialProfile: school,
+                                    onSubmit: (updated) => appState.updateSchoolProfile(updated),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(999),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryLight,
+                                    borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(maxWidth: 180),
+                                        child: Text(
+                                          school.name,
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primary,
                                           ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(width: 4),
-                                        const Icon(Icons.edit_outlined, size: 11, color: AppColors.primary),
-                                      ],
-                                    ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      const Icon(Icons.edit_outlined, size: 12, color: AppColors.primary),
+                                    ],
                                   ),
                                 ),
                               ),
