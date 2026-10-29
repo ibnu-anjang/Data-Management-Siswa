@@ -76,6 +76,11 @@ class _S02ClientHomeScreenState extends State<S02ClientHomeScreen> {
         ? appState.rombelList
         : appState.getRombelListByMajor(_selectedMajorFilter);
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallMobile = screenWidth < 360;
+    final hPadding = isSmallMobile ? 12.0 : 20.0;
+    final vPadding = isSmallMobile ? 12.0 : 18.0;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -90,7 +95,7 @@ class _S02ClientHomeScreenState extends State<S02ClientHomeScreen> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1040),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: isSmallMobile ? 10 : 14),
                     child: Row(
                       children: [
                         AppAvatar(
@@ -157,7 +162,7 @@ class _S02ClientHomeScreenState extends State<S02ClientHomeScreen> {
                 color: AppColors.primary,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1040),

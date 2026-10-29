@@ -307,5 +307,68 @@ void main() {
       final gap = greetingRect.left - avatarRect.right;
       expect(gap, closeTo(14.0, 0.5));
     });
+
+    testWidgets('Dashboard greeting reflows gracefully on 320px mobile S screen without broken syllables', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 420;
+                  if (isNarrow) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const AppAvatar(name: 'Administrator', size: 42),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Text(
+                                    'Selamat Pagi, Admin',
+                                    style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w700),
+                                    maxLines: 1,
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    'Kamis, 29 Oktober 2026 • Semester Genap',
+                                    style: TextStyle(fontSize: 11.5),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        const Text('SMK AK Nusa Bangsa'),
+                      ],
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final greetingRect = tester.getRect(find.text('Selamat Pagi, Admin'));
+      // Greeting must have ample horizontal room (> 180px) on 320px screen
+      expect(greetingRect.width, greaterThan(180));
+      expect(find.text('SMK AK Nusa Bangsa'), findsOneWidget);
+    });
   });
 }
