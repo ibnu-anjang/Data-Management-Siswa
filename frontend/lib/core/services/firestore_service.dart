@@ -49,8 +49,15 @@ class FirestoreService {
 
   /// Update an existing student document in Firestore
   Future<void> updateStudent(StudentModel student) async {
-    if (student.docId.isEmpty) return;
-    await _studentsRef.doc(student.docId).update(student.toFirestore());
+    if (student.docId.isNotEmpty) {
+      await _studentsRef.doc(student.docId).update(student.toFirestore());
+      return;
+    }
+    // Fallback if docId was not populated in memory
+    final query = await _studentsRef.where('id', isEqualTo: student.id).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      await _studentsRef.doc(query.docs.first.id).update(student.toFirestore());
+    }
   }
 
   /// Atomically update the class of multiple students using a single Firestore batch

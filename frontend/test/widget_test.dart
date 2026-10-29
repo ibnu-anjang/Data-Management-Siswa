@@ -192,5 +192,37 @@ void main() {
 
       expect(find.text('S'), findsOneWidget);
     });
+
+    testWidgets('AppAvatar falls back to initial when photoUrl has whitespace only', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppAvatar(
+              name: 'Dewi Lestari',
+              photoUrl: '   ',
+              size: 40,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('D'), findsOneWidget);
+    });
+
+    testWidgets('AppAvatar correctly extracts first alphanumeric initial', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppAvatar(
+              name: '@administrator',
+              photoUrl: '',
+              size: 40,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('A'), findsOneWidget);
+    });
   });
 }

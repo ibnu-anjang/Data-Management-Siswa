@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/student_model.dart';
 import '../models/school_profile_model.dart';
 import '../services/firestore_service.dart';
@@ -74,7 +75,20 @@ class AppState extends ChangeNotifier {
   User? get firebaseUser => _firebaseUser;
   String get userEmail => _firebaseUser?.email ?? '';
   String get userName => _firebaseUser?.displayName ?? userEmail.split('@').first;
-  String get userPhotoUrl => _firebaseUser?.photoURL ?? '';
+
+  // Custom user photo url:
+  // null = rely on _firebaseUser?.photoURL
+  // '' = user explicitly removed photo (force return to initial avatar!)
+  // 'https://...' = custom uploaded photo
+  String? _customUserPhotoUrl;
+
+  String get userPhotoUrl {
+    if (_customUserPhotoUrl != null) {
+      return _customUserPhotoUrl!;
+    }
+    return _firebaseUser?.photoURL ?? '';
+  }
+
   String get userInitial {
     final name = userName.trim();
     if (name.isNotEmpty) return name[0].toUpperCase();
@@ -84,11 +98,31 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> updateUserPhoto(String photoUrl) async {
+    // 1. Instantly update in-memory state so UI reverts to initial avatar immediately
+    _customUserPhotoUrl = photoUrl;
+    notifyListeners();
+
     final user = _auth.currentUser;
     if (user != null) {
-      await user.updatePhotoURL(photoUrl.isEmpty ? null : photoUrl);
-      await user.reload();
-      _firebaseUser = _auth.currentUser;
+      // 2. Persist in SharedPreferences so it survives page reloads
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_avatar_${user.uid}', photoUrl);
+      } catch (e) {
+        debugPrint('Error writing avatar preference: $e');
+      }
+
+      // 3. Sync to Firebase Auth
+      try {
+        // Pass photoUrl directly (empty string '' clears photo on web and mobile; do not pass null)
+        await user.updatePhotoURL(photoUrl);
+        await user.reload();
+        _firebaseUser = _auth.currentUser;
+        // Keep _customUserPhotoUrl consistent with photoUrl
+        _customUserPhotoUrl = photoUrl;
+      } catch (e) {
+        debugPrint('Error updating auth photo: $e');
+      }
       notifyListeners();
     }
   }
@@ -143,10 +177,11 @@ class AppState extends ChangeNotifier {
   // Auth State Listener
   // ────────────────────────────────────────────────────────
 
-  void _onAuthStateChanged(User? user) {
+  Future<void> _onAuthStateChanged(User? user) async {
     _firebaseUser = user;
     if (user == null) {
       // User is signed out
+      _customUserPhotoUrl = null;
       _studentsSubscription?.cancel();
       _studentsSubscription = null;
       _settingsSubscription?.cancel();
@@ -155,6 +190,17 @@ class AppState extends ChangeNotifier {
       _activeScreen = 's01';
       notifyListeners();
     } else {
+      // Restore cached photo preference if previously set
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final cached = prefs.getString('user_avatar_${user.uid}');
+        if (cached != null) {
+          _customUserPhotoUrl = cached;
+        }
+      } catch (e) {
+        debugPrint('Error reading avatar preference: $e');
+      }
+
       // User is signed in — determine role, then load data
       _currentRole = _isAdminEmail(user.email ?? '') ? AppRole.admin : AppRole.client;
       _activeScreen = _currentRole == AppRole.admin ? 's04' : 's02';
@@ -317,6 +363,7 @@ class AppState extends ChangeNotifier {
 
   /// Sign out from Firebase Auth
   Future<void> logout() async {
+    _customUserPhotoUrl = null;
     await _auth.signOut();
     // _onAuthStateChanged will handle navigation back to s01
   }
@@ -483,6 +530,17 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> updateStudent(StudentModel updatedStudent) async {
+    // 1. Optimistic in-memory update for instant UI responsiveness (avatar, class, name)
+    final index = _studentsData.indexWhere(
+      (s) =>
+          (updatedStudent.docId.isNotEmpty && s.docId == updatedStudent.docId) ||
+          (updatedStudent.id != 0 && s.id == updatedStudent.id),
+    );
+    if (index != -1) {
+      _studentsData[index] = updatedStudent;
+      notifyListeners();
+    }
+
     try {
       await _firestoreService.updateStudent(updatedStudent);
       showToast('Data siswa "${updatedStudent.name}" berhasil diperbarui!');

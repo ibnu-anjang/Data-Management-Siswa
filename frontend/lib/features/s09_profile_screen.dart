@@ -73,6 +73,7 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
                       Navigator.pop(ctx);
                       await widget.appState.updateUserPhoto('');
                       if (mounted) {
+                        setState(() {});
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Foto profil berhasil dihapus. Kembali ke foto inisial.'),
@@ -107,6 +108,7 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
       if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
         await widget.appState.updateUserPhoto(uploadedUrl);
         if (mounted) {
+          setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Foto profil berhasil diperbarui!'),
@@ -194,121 +196,126 @@ class _S09ProfileScreenState extends State<S09ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Profile User Card
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: cardBg,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(
+                    ListenableBuilder(
+                      listenable: appState,
+                      builder: (context, _) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: cardBg,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: borderColor),
+                          ),
+                          child: Row(
                             children: [
-                              InkWell(
-                                onTap: () => _handlePickProfilePhoto(),
-                                borderRadius: BorderRadius.circular(32),
-                                child: _isUploadingPhoto
-                                    ? Container(
-                                        width: 52,
-                                        height: 52,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: isAdmin ? AppColors.primary : AppColors.success,
-                                        ),
-                                        child: const Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: Colors.white,
+                              Stack(
+                                children: [
+                                  InkWell(
+                                    onTap: () => _handlePickProfilePhoto(),
+                                    borderRadius: BorderRadius.circular(32),
+                                    child: _isUploadingPhoto
+                                        ? Container(
+                                            width: 52,
+                                            height: 52,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: isAdmin ? AppColors.primary : AppColors.success,
                                             ),
+                                            child: const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : AppAvatar(
+                                            name: appState.userName.isNotEmpty
+                                                ? appState.userName
+                                                : (isAdmin ? 'Administrator' : 'Client'),
+                                            photoUrl: appState.userPhotoUrl,
+                                            size: 52,
+                                            backgroundColor: isAdmin ? AppColors.primary : AppColors.success,
+                                            textColor: Colors.white,
+                                            fontSize: 20,
+                                            showBorder: true,
+                                            borderColor: isAdmin ? AppColors.primary : AppColors.success,
+                                            borderWidth: 2,
                                           ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () => _handlePickProfilePhoto(),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? AppColors.surfaceDark : Colors.white,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: borderColor),
                                         ),
-                                      )
-                                    : AppAvatar(
-                                        name: appState.userName.isNotEmpty
-                                            ? appState.userName
-                                            : (isAdmin ? 'Administrator' : 'Client'),
-                                        photoUrl: appState.userPhotoUrl,
-                                        size: 52,
-                                        backgroundColor: isAdmin ? AppColors.primary : AppColors.success,
-                                        textColor: Colors.white,
-                                        fontSize: 20,
-                                        showBorder: true,
-                                        borderColor: isAdmin ? AppColors.primary : AppColors.success,
-                                        borderWidth: 2,
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 11,
+                                          color: AppColors.primary,
+                                        ),
                                       ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: InkWell(
-                                  onTap: () => _handlePickProfilePhoto(),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      color: isDark ? AppColors.surfaceDark : Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: borderColor),
-                                    ),
-                                    child: const Icon(
-                                      Icons.camera_alt,
-                                      size: 11,
-                                      color: AppColors.primary,
                                     ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      isAdmin ? 'Administrator Utama' : 'Pengunjung (Client)',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: textColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      appState.userEmail.isNotEmpty
+                                          ? appState.userEmail
+                                          : (isAdmin ? 'admin@sekolahku.sch.id' : 'client@sekolahku.sch.id'),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: textMuted,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: isAdmin ? AppColors.primaryLight : AppColors.successBg,
+                                        borderRadius: BorderRadius.circular(999),
+                                      ),
+                                      child: Text(
+                                        isAdmin ? 'Peran: Admin' : 'Peran: Client',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: isAdmin ? AppColors.primary : AppColors.successText,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  isAdmin ? 'Administrator Utama' : 'Pengunjung (Client)',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: textColor,
-                                  ),
-                                ),
-                                Text(
-                                  appState.userEmail.isNotEmpty
-                                      ? appState.userEmail
-                                      : (isAdmin ? 'admin@sekolahku.sch.id' : 'client@sekolahku.sch.id'),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: textMuted,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: isAdmin ? AppColors.primaryLight : AppColors.successBg,
-                                    borderRadius: BorderRadius.circular(999),
-                                  ),
-                                  child: Text(
-                                    isAdmin ? 'Peran: Admin' : 'Peran: Client',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: isAdmin ? AppColors.primary : AppColors.successText,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 

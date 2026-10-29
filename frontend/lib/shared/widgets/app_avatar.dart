@@ -32,6 +32,12 @@ class AppAvatar extends StatelessWidget {
   String get _initial {
     final clean = name.trim();
     if (clean.isEmpty) return 'S';
+    for (int i = 0; i < clean.length; i++) {
+      final char = clean[i];
+      if (RegExp(r'[a-zA-Z0-9]').hasMatch(char)) {
+        return char.toUpperCase();
+      }
+    }
     return clean[0].toUpperCase();
   }
 
@@ -42,6 +48,7 @@ class AppAvatar extends StatelessWidget {
     final bg = backgroundColor ?? (isDark ? AppColors.surfaceSubtleDark : AppColors.primaryLight);
     final textCol = textColor ?? AppColors.primary;
     final fSize = fontSize ?? (size * 0.42);
+    final cleanPhoto = photoUrl.trim();
 
     final avatarShape = ClipRRect(
       borderRadius: BorderRadius.circular(radius),
@@ -59,9 +66,9 @@ class AppAvatar extends StatelessWidget {
               : null,
         ),
         alignment: Alignment.center,
-        child: photoUrl.isNotEmpty
+        child: cleanPhoto.isNotEmpty
             ? Image.network(
-                photoUrl,
+                cleanPhoto,
                 width: size,
                 height: size,
                 fit: BoxFit.cover,

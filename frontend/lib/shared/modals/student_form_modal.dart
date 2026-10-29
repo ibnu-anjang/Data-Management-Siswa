@@ -80,6 +80,7 @@ class _StudentFormModalState extends State<StudentFormModal> {
     super.initState();
     final s = widget.initialStudent;
     _nameController = TextEditingController(text: s?.name ?? '');
+    _nameController.addListener(_onNameChanged);
     _nisnController = TextEditingController(text: s?.nisn ?? '');
     _nisController = TextEditingController(text: s?.nis ?? '');
     _birthPlaceController = TextEditingController(text: s?.birthPlace ?? '');
@@ -101,8 +102,13 @@ class _StudentFormModalState extends State<StudentFormModal> {
     }
   }
 
+  void _onNameChanged() {
+    setState(() {});
+  }
+
   @override
   void dispose() {
+    _nameController.removeListener(_onNameChanged);
     _nameController.dispose();
     _nisnController.dispose();
     _nisController.dispose();
