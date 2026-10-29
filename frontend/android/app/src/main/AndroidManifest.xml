@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
-        android:label="data_management_siswa"
+        android:label="SekolahKu"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
