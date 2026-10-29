@@ -500,6 +500,8 @@ class AppState extends ChangeNotifier {
       final matchesQuery = q.isEmpty ||
           student.name.toLowerCase().contains(q) ||
           student.nis.toLowerCase().contains(q) ||
+          student.nisn.toLowerCase().contains(q) ||
+          student.major.toLowerCase().contains(q) ||
           student.className.toLowerCase().contains(q);
       final matchesClass = filterClass == 'all' || student.className == filterClass;
       final matchesGender = filterGender == 'all' || student.gender == filterGender;
@@ -511,6 +513,37 @@ class AppState extends ChangeNotifier {
   int getStudentCountByClass(String className) {
     if (className == 'all') return _studentsData.length;
     return _studentsData.where((s) => s.className == className).length;
+  }
+
+  int getStudentCountByMajor(String majorKeyword) {
+    final lower = majorKeyword.toLowerCase();
+    return _studentsData.where((s) {
+      final m = s.major.toLowerCase();
+      final c = s.className.toLowerCase();
+      return m.contains(lower) || c.contains(lower);
+    }).length;
+  }
+
+  List<String> getRombelListByMajor(String majorKeyword) {
+    final lower = majorKeyword.toLowerCase();
+    return _rombelList.where((r) => r.toLowerCase().contains(lower)).toList();
+  }
+
+  List<StudentModel> searchStudentsInstant(String query, {int limit = 5}) {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return [];
+    return _studentsData.where((student) {
+      return student.name.toLowerCase().contains(q) ||
+          student.nisn.toLowerCase().contains(q) ||
+          student.nis.toLowerCase().contains(q) ||
+          student.className.toLowerCase().contains(q) ||
+          student.major.toLowerCase().contains(q);
+    }).take(limit).toList();
+  }
+
+  List<StudentModel> get recentStudents {
+    if (_studentsData.isEmpty) return [];
+    return _studentsData.reversed.take(4).toList();
   }
 
   // ────────────────────────────────────────────────────────

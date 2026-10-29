@@ -4,6 +4,8 @@ import 'package:data_management_siswa/main.dart';
 import 'package:data_management_siswa/core/models/student_model.dart';
 import 'package:data_management_siswa/shared/modals/student_form_modal.dart';
 import 'package:data_management_siswa/shared/widgets/app_avatar.dart';
+import 'package:data_management_siswa/shared/widgets/animated_count.dart';
+import 'package:data_management_siswa/core/utils/app_date_utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -223,6 +225,36 @@ void main() {
       );
 
       expect(find.text('A'), findsOneWidget);
+    });
+  });
+
+  group('Interactive Dashboard Features Tests', () {
+    test('AppDateUtils returns valid Indonesian greeting and date', () {
+      final greeting = AppDateUtils.getTimeGreeting();
+      expect(['Selamat Pagi', 'Selamat Siang', 'Selamat Sore', 'Selamat Malam'].contains(greeting), isTrue);
+
+      final dateFormatted = AppDateUtils.getFormattedToday();
+      expect(dateFormatted.isNotEmpty, isTrue);
+      expect(dateFormatted.contains('202'), isTrue);
+    });
+
+    testWidgets('AnimatedCount renders target count and suffix', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AnimatedCount(
+              count: 42,
+              suffix: 'Siswa',
+            ),
+          ),
+        ),
+      );
+
+      // Fast forward animation
+      await tester.pumpAndSettle();
+
+      expect(find.text('42'), findsOneWidget);
+      expect(find.text('Siswa'), findsOneWidget);
     });
   });
 }
